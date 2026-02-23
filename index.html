@@ -1,0 +1,3570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>Bull English Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════════════════════
+   BULL ENGLISH ACADEMY  v3.0
+   Aesthetic: Premium Dark Academia — Deep Obsidian + Warm Gold
+   New: Speaking (SpeechRecognition) + Listening (SpeechSynthesis)
+   Fix: Drag & Drop with unique chip IDs
+   Profile: Hexagonal radar (6 skills)
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  /* Core palette */
+  --ink:     #08080f;
+  --ink2:    #0f0f1a;
+  --ink3:    #161625;
+  --ink4:    #1e1e35;
+  --gold:    #d4a843;
+  --gold2:   #f0c96a;
+  --gold-g:  rgba(212,168,67,0.22);
+  --blue:    #4a7cf7;
+  --blue2:   #7aa2ff;
+  --blue-g:  rgba(74,124,247,0.22);
+  --ok:      #2dd4bf;
+  --ok2:     #5eead4;
+  --ok-g:    rgba(45,212,191,0.18);
+  --err:     #f4657a;
+  --err2:    #ff8fa3;
+  --err-g:   rgba(244,101,122,0.18);
+  --purp:    #a78bfa;
+  --amber:   #fbbf24;
+  --rose:    #fb7185;
+  /* Text */
+  --t1: #f0eee8;
+  --t2: #a09898;
+  --t3: #5a5468;
+  --t4: #2e2b3a;
+  /* Glass */
+  --g1: rgba(255,255,255,0.045);
+  --g2: rgba(255,255,255,0.075);
+  --g3: rgba(255,255,255,0.11);
+  --gb: rgba(255,255,255,0.07);
+  --gbo: rgba(255,255,255,0.09);
+  /* Type */
+  --fh: 'Syne', sans-serif;
+  --fb: 'DM Sans', sans-serif;
+  --fi: 'DM Serif Display', serif;
+  /* Radii */
+  --r1:4px; --r2:8px; --r3:14px; --r4:20px; --r5:30px; --r6:50px;
+  /* Nav */
+  --nav: 68px;
+  /* Shadows */
+  --sh1: 0 2px 12px rgba(0,0,0,0.45);
+  --sh2: 0 6px 28px rgba(0,0,0,0.55);
+  --sh3: 0 16px 48px rgba(0,0,0,0.65);
+  --shg: 0 0 32px rgba(212,168,67,0.15);
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { height:100%; font-size:16px }
+body {
+  font-family: var(--fb);
+  background: var(--ink);
+  color: var(--t1);
+  min-height: 100%;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+button { cursor:pointer; border:none; background:none; font-family:inherit; -webkit-tap-highlight-color:transparent }
+input  { font-family:inherit }
+img,canvas { display:block; max-width:100% }
+::selection { background: var(--gold-g); color: var(--gold) }
+
+/* Scrollbar */
+::-webkit-scrollbar { width:4px }
+::-webkit-scrollbar-track { background:transparent }
+::-webkit-scrollbar-thumb { background:var(--t4); border-radius:2px }
+
+/* ── Fixed user identity chip ─────────────────────── */
+.user-chip {
+  position: fixed;
+  top: 10px;
+  left: 12px;
+  z-index: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px 6px 6px;
+  background: rgba(8,8,15,0.88);
+  border: 1px solid rgba(212,168,67,0.3);
+  border-radius: 30px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 2px 14px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+  cursor: pointer;
+  transition: all .22s;
+  animation: slideDown .3s ease;
+}
+.user-chip:hover {
+  background: rgba(20,20,35,0.96);
+  border-color: rgba(212,168,67,0.6);
+  box-shadow: 0 4px 20px rgba(212,168,67,0.12);
+  transform: translateY(-1px);
+}
+.user-chip.off { display:none }
+.uc-av {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ink4), #2a1e3e);
+  border: 1.5px solid rgba(212,168,67,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.uc-info { display:flex; flex-direction:column; gap:1px; min-width:0 }
+.uc-name {
+  font-family: var(--fh);
+  font-size: 0.72rem; font-weight: 700; color: var(--t1);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  max-width: 90px;
+}
+.uc-status { font-size:0.56rem; font-weight:600; color:var(--ok); letter-spacing:.06em; text-transform:uppercase }
+
+/* ─── Noise texture overlay ─────────────────────────── */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:9998;
+  opacity:0.45;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATIONS
+   ═══════════════════════════════════════════════════════════ */
+@keyframes fadeUp   { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:none} }
+@keyframes fadeIn   { from{opacity:0} to{opacity:1} }
+@keyframes scIn     { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
+@keyframes shake    { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-9px)} 40%{transform:translateX(9px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+@keyframes popIn    { 0%{transform:scale(.35);opacity:0} 65%{transform:scale(1.06)} 100%{transform:scale(1);opacity:1} }
+@keyframes coinRise { 0%{opacity:1;transform:translateY(0) scale(1)} 100%{opacity:0;transform:translateY(-60px) scale(1.4)} }
+@keyframes starPop  { 0%{transform:scale(0)rotate(-20deg);opacity:0} 60%{transform:scale(1.3)rotate(5deg);opacity:1} 100%{transform:scale(1)rotate(0);opacity:1} }
+@keyframes pulse    { 0%,100%{opacity:1} 50%{opacity:.5} }
+@keyframes spin     { to{transform:rotate(360deg)} }
+@keyframes breathe  { 0%,100%{box-shadow:0 0 18px var(--gold-g)} 50%{box-shadow:0 0 36px var(--gold-g),0 0 72px rgba(212,168,67,.08)} }
+@keyframes recordPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.15);opacity:.7} }
+@keyframes slideDown{ from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:none} }
+@keyframes waveBar  { 0%,100%{transform:scaleY(.3)} 50%{transform:scaleY(1)} }
+
+/* ═══════════════════════════════════════════════════════════
+   SCREEN SYSTEM (THE FIX — unified, no ID overrides)
+   .scr        = display:none
+   .scr.active = display:flex
+   ═══════════════════════════════════════════════════════════ */
+.scr {
+  display: none;
+  position: fixed;
+  inset: 0;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--ink);
+  padding-bottom: calc(var(--nav) + 10px);
+}
+.scr.active { display:flex; animation:fadeIn .25s ease }
+.scr.nonav  { padding-bottom:0 }
+
+/* ═══════════════════════════════════════════════════════════
+   BOTTOM NAV
+   ═══════════════════════════════════════════════════════════ */
+#nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: var(--nav);
+  background: rgba(8,8,15,0.96);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px);
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  align-items: center;
+  z-index: 500;
+  padding: 0 6px 2px;
+}
+#nav.off { display:none }
+
+.nb {
+  flex: 1;
+  height: 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--t3);
+  font-size: 0.58rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: var(--r3);
+  transition: color .18s, background .18s;
+  position: relative;
+}
+.nb:hover { color: var(--t2) }
+.nb.on  { color: var(--gold) }
+.nb .ni { font-size: 1.2rem; line-height: 1 }
+.nb.on .ni { filter: drop-shadow(0 0 6px var(--gold-g)) }
+
+.nbadge {
+  position: absolute;
+  top: 6px; right: calc(50% - 20px);
+  background: var(--err);
+  color: #fff;
+  font-size: 0.5rem;
+  font-weight: 700;
+  min-width: 14px; height: 14px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 3px;
+  border: 1.5px solid var(--ink);
+}
+.nbadge.off { display:none }
+
+/* ═══════════════════════════════════════════════════════════
+   SHARED COMPONENTS
+   ═══════════════════════════════════════════════════════════ */
+.hdr {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  padding: 54px 20px 14px;
+  background: linear-gradient(180deg,rgba(8,8,15,.99) 0%,rgba(8,8,15,.94) 100%);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.hdr-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.hdr-title {
+  font-family: var(--fh);
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.hdr-sub {
+  font-size: 0.72rem;
+  color: var(--t3);
+  font-weight: 500;
+  margin-top: 2px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* HUD pills */
+.hud { display:flex; align-items:center; gap:7px }
+.pill {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  background: rgba(0,0,0,0.55);
+  border: 1.5px solid rgba(255,255,255,0.14);
+  border-radius: var(--r6);
+  font-family: var(--fh);
+  font-size: 0.84rem;
+  font-weight: 800;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.pill-gold  { color: var(--gold2); border-color: rgba(212,168,67,.45); text-shadow: 0 0 10px rgba(212,168,67,.5) }
+.pill-purp  { color: #c4b5fd;      border-color: rgba(167,139,250,.45); text-shadow: 0 0 10px rgba(167,139,250,.4) }
+
+/* Cards */
+.card {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--r4);
+}
+.card:hover { background: var(--g2); border-color: rgba(255,255,255,0.11) }
+
+/* Gold divider line */
+.gdiv {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-g), transparent);
+  margin: 0 20px;
+}
+
+/* Btn primary */
+.btn-primary {
+  width: 100%;
+  padding: 15px 22px;
+  background: linear-gradient(135deg, var(--gold) 0%, #b8892e 100%);
+  border-radius: var(--r5);
+  color: var(--ink);
+  font-family: var(--fh);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  box-shadow: 0 4px 20px rgba(212,168,67,.3);
+  transition: all .2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(212,168,67,.4) }
+.btn-primary:active { transform:translateY(0) }
+
+/* Skill tags */
+.stag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--r6);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.sk-vocabulary { background:rgba(74,124,247,.15);  color:var(--blue2);  border:1px solid rgba(74,124,247,.2) }
+.sk-grammar    { background:rgba(45,212,191,.12);  color:var(--ok2);    border:1px solid rgba(45,212,191,.2) }
+.sk-reading    { background:rgba(167,139,250,.12); color:var(--purp);   border:1px solid rgba(167,139,250,.2) }
+.sk-listening  { background:rgba(251,191,36,.12);  color:var(--amber);  border:1px solid rgba(251,191,36,.2) }
+.sk-speaking   { background:rgba(251,113,133,.12); color:var(--rose);   border:1px solid rgba(251,113,133,.2) }
+.sk-writing    { background:rgba(212,168,67,.12);  color:var(--gold2);  border:1px solid rgba(212,168,67,.2) }
+
+/* ═══════════════════════════════════════════════════════════
+   SPLASH  /  ONBOARDING
+   ═══════════════════════════════════════════════════════════ */
+#s-splash {
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(74,124,247,.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 85%, rgba(212,168,67,.06) 0%, transparent 55%),
+    var(--ink);
+}
+
+.onb {
+  width: 100%;
+  max-width: 440px;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 26px;
+  text-align: center;
+  animation: fadeUp .55s ease;
+}
+
+.onb-logo {
+  width: 90px; height: 90px;
+  border-radius: 24px;
+  background: linear-gradient(145deg, #1e1a2e, #2a2240);
+  border: 2px solid rgba(212,168,67,.35);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 3rem;
+  box-shadow: var(--shg);
+  animation: breathe 4s ease-in-out infinite;
+}
+
+.onb-wordmark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: -8px;
+}
+.onb-title {
+  font-family: var(--fh);
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.05;
+  color: var(--t1);
+}
+.onb-title span { color: var(--gold) }
+.onb-tagline {
+  font-family: var(--fi);
+  font-size: 0.88rem;
+  font-style: italic;
+  color: var(--t2);
+  letter-spacing: .05em;
+}
+
+.onb-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.fg { display:flex; flex-direction:column; gap:8px; text-align:left }
+.flbl {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--t3);
+  padding-left: 2px;
+}
+
+.finp {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r3);
+  color: var(--t1);
+  font-family: var(--fb);
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  transition: all .2s;
+}
+.finp::placeholder { color: var(--t3) }
+.finp:focus { border-color: var(--gold); background: rgba(212,168,67,.05); box-shadow: 0 0 0 3px var(--gold-g) }
+.finp.has-err { border-color: var(--err) }
+
+.lvl-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px }
+
+.lv-btn {
+  padding: 12px 6px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r3);
+  color: var(--t2);
+  font-family: var(--fh);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.5;
+  transition: all .2s;
+}
+.lv-btn:hover { border-color: var(--gold-g); color: var(--gold2) }
+.lv-btn.sel {
+  background: rgba(212,168,67,.12);
+  border-color: var(--gold);
+  color: var(--gold);
+  box-shadow: 0 0 16px var(--gold-g);
+}
+
+.onb-foot {
+  font-size: 0.68rem;
+  color: var(--t3);
+  line-height: 1.7;
+  letter-spacing: .02em;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MAP SCREEN
+   ═══════════════════════════════════════════════════════════ */
+.map-body { padding: 14px 16px; display:flex; flex-direction:column; gap:11px }
+
+.world-card {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r4);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.world-card.open { border-color: rgba(255,255,255,.12) }
+
+.world-head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 15px 18px;
+  cursor: pointer;
+  transition: background .18s;
+}
+.world-head:hover { background: var(--g2) }
+
+.world-gem {
+  width: 46px; height: 46px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  position: relative;
+}
+.world-gem::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.world-info { flex:1; min-width:0 }
+.world-name {
+  font-family: var(--fh);
+  font-size: 1rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: -.01em;
+}
+.world-cefr {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  margin-top: 2px;
+}
+.world-chev { color: var(--t3); transition: transform .28s; flex-shrink:0; font-size: .9rem }
+.world-card.open .world-chev { transform:rotate(180deg) }
+
+.world-zones {
+  display: none;
+  flex-direction: column;
+  gap: 7px;
+  padding: 0 14px 14px;
+}
+.world-card.open .world-zones { display:flex }
+
+/* World accent colors */
+.w-a1 .world-gem { background:linear-gradient(135deg,#1a2a5e,#0f1a40) }
+.w-a1 .world-cefr { color: var(--blue2) }
+.w-a1.open { border-color: rgba(74,124,247,.25) }
+
+.w-b1 .world-gem { background:linear-gradient(135deg,#2a1e3e,#1a1228) }
+.w-b1 .world-cefr { color: var(--purp) }
+.w-b1.open { border-color: rgba(167,139,250,.25) }
+
+.w-c1 .world-gem { background:linear-gradient(135deg,#3a2a00,#201500) }
+.w-c1 .world-cefr { color: var(--gold2) }
+.w-c1.open { border-color: rgba(212,168,67,.3) }
+
+/* Zone row */
+.zone-row {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--r3);
+  padding: 11px 13px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.zone-row:hover:not(.lck) {
+  background: var(--g2);
+  border-color: rgba(255,255,255,.12);
+  transform: translateX(3px);
+}
+.zone-row.lck { opacity:.38; cursor:not-allowed; filter:grayscale(.7) }
+.zone-row.done { border-color: rgba(45,212,191,.25); background: rgba(45,212,191,.04) }
+
+.zone-ico {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  background: var(--g2);
+}
+.zone-info { flex:1; min-width:0 }
+.zone-name { font-size:.88rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.zone-sub  { font-size:.65rem; color:var(--t3); margin-top:2px; text-transform:uppercase; letter-spacing:.07em }
+.zone-stars { font-size:.8rem; letter-spacing:2px; flex-shrink:0 }
+
+/* Boss zone highlight */
+.zone-row.boss-zone {
+  background: linear-gradient(135deg, rgba(212,168,67,.05), rgba(212,168,67,.02));
+  border-color: rgba(212,168,67,.2);
+}
+.zone-row.boss-zone:hover:not(.lck) { border-color: rgba(212,168,67,.4) }
+
+/* ═══════════════════════════════════════════════════════════
+   EXERCISE SCREEN
+   ═══════════════════════════════════════════════════════════ */
+#s-ex {
+  background: linear-gradient(180deg, var(--ink2) 0%, var(--ink) 60%);
+}
+
+.ex-hdr {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  padding: 14px 16px 12px;
+  background: rgba(8,8,15,.96);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ex-close-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--t2);
+  font-size: .9rem;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all .18s;
+}
+.ex-close-btn:hover { background: rgba(244,101,122,.15); color: var(--err); border-color:var(--err-g) }
+
+.ex-prog { flex:1 }
+.ex-prog-track {
+  height: 6px;
+  background: rgba(255,255,255,.07);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.ex-prog-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ok) 0%, var(--blue) 100%);
+  border-radius: 3px;
+  transition: width .4s ease;
+}
+.ex-prog-lbl { font-size:.62rem; font-weight:600; color:var(--t3); letter-spacing:.06em }
+
+.ex-lives { font-size:.95rem; letter-spacing:3px; flex-shrink:0 }
+
+.ex-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 18px;
+  max-width: 640px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.ex-q-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ex-q {
+  font-family: var(--fi);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.42;
+  color: var(--t1);
+}
+
+.ex-con { display:flex; flex-direction:column; gap:9px }
+.ex-con.shk { animation: shake .38s ease }
+
+/* ── MC ── */
+.mc-opt {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r3);
+  color: var(--t1);
+  font-size: .92rem;
+  font-weight: 500;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all .2s;
+  font-family: var(--fb);
+}
+.mc-opt:hover:not(:disabled) {
+  background: var(--g2);
+  border-color: rgba(212,168,67,.3);
+  transform: translateX(3px);
+}
+.mc-opt.cor { background: rgba(45,212,191,.1); border-color: var(--ok); color: var(--ok2) }
+.mc-opt.wrg { background: rgba(244,101,122,.1); border-color: var(--err); color: var(--err2) }
+
+.mc-letter {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  background: rgba(255,255,255,.07);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--fh);
+  font-size: .72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  transition: background .18s;
+}
+.mc-opt.cor .mc-letter { background: var(--ok); color: var(--ink) }
+.mc-opt.wrg .mc-letter { background: var(--err); color: #fff }
+
+/* ── TF ── */
+.tf-stmt {
+  padding: 14px 16px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r3);
+  font-family: var(--fi);
+  font-size: 1rem;
+  font-style: italic;
+  color: var(--t1);
+  line-height: 1.6;
+}
+.tf-wrap { display:grid; grid-template-columns:1fr 1fr; gap:10px }
+.tf-btn {
+  padding: 20px 10px;
+  border-radius: var(--r3);
+  font-family: var(--fh);
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 1px solid rgba(255,255,255,.08);
+  color: var(--t1);
+  transition: all .2s;
+  letter-spacing:.03em;
+}
+.tf-t { background: rgba(45,212,191,.07) }
+.tf-f { background: rgba(244,101,122,.07) }
+.tf-btn:hover:not(:disabled) { transform:scale(1.03); border-color:rgba(255,255,255,.15) }
+.tf-btn.cor { background:rgba(45,212,191,.2); border-color:var(--ok); color:var(--ok2) }
+.tf-btn.wrg { background:rgba(244,101,122,.2); border-color:var(--err); color:var(--err2) }
+
+/* ── FIB ── */
+.fib-hint {
+  padding: 8px 12px;
+  background: rgba(74,124,247,.07);
+  border: 1px solid rgba(74,124,247,.18);
+  border-radius: var(--r2);
+  font-size: .78rem;
+  color: var(--blue2);
+  font-style: italic;
+}
+.fib-inp {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--r3);
+  color: var(--t1);
+  font-family: var(--fb);
+  font-size: .98rem;
+  font-weight: 500;
+  outline: none;
+  transition: all .2s;
+}
+.fib-inp::placeholder { color:var(--t3) }
+.fib-inp:focus { border-color:var(--gold); background:rgba(212,168,67,.04); box-shadow:0 0 0 3px var(--gold-g) }
+.fib-inp.cor { border-color:var(--ok); background:rgba(45,212,191,.07) }
+.fib-inp.wrg { border-color:var(--err); background:rgba(244,101,122,.07) }
+
+/* ── DRAG & DROP (FIXED) ── */
+.dd-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px;
+  background: rgba(255,255,255,.025);
+  border: 1px dashed rgba(255,255,255,.12);
+  border-radius: var(--r3);
+  min-height: 54px;
+}
+
+.chip {
+  padding: 7px 14px;
+  border-radius: var(--r6);
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: grab;
+  user-select: none;
+  transition: all .18s;
+  border: 1px solid transparent;
+  font-family: var(--fb);
+}
+.chip-word {
+  background: rgba(74,124,247,.18);
+  color: var(--blue2);
+  border-color: rgba(74,124,247,.25);
+}
+.chip-word:hover:not(.used) { background:rgba(74,124,247,.28); transform:scale(1.05) }
+.chip-word.used { opacity:.28; cursor:default; transform:none }
+.chip-word.dragging { opacity:.3 }
+
+.dd-targets { display:flex; flex-direction:column; gap:9px }
+.dd-row { display:flex; align-items:center; gap:10px }
+.dd-pfx { font-weight:600; font-size:.88rem; min-width:70px; color:var(--t2); flex-shrink:0 }
+
+.dd-zone {
+  flex: 1;
+  min-height: 42px;
+  border: 1.5px dashed rgba(255,255,255,.12);
+  border-radius: var(--r3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 12px;
+  font-size: .83rem;
+  color: var(--t3);
+  transition: all .2s;
+  font-family: var(--fb);
+}
+.dd-zone.over { border-color: var(--gold); background: rgba(212,168,67,.07) }
+.dd-zone.filled { border-color: rgba(45,212,191,.4); background:rgba(45,212,191,.07); color:var(--ok2); font-weight:600; border-style:solid }
+.dd-zone.bad  { border-color: var(--err); background:rgba(244,101,122,.07) }
+
+/* ── SENTENCE BUILDER (FIXED) ── */
+.sb-zone {
+  min-height: 54px;
+  border: 1.5px dashed rgba(74,124,247,.4);
+  border-radius: var(--r3);
+  padding: 10px 13px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  background: rgba(74,124,247,.04);
+  transition: all .2s;
+}
+.sb-zone.over { background:rgba(74,124,247,.1); border-style:solid }
+.sb-zone em { color:var(--t3); font-size:.82rem; font-style:normal }
+
+.sb-chip-pool { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px }
+
+.sb-chip {
+  padding: 6px 13px;
+  background: rgba(74,124,247,.16);
+  border: 1px solid rgba(74,124,247,.25);
+  border-radius: var(--r6);
+  color: var(--blue2);
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all .18s;
+  font-family: var(--fb);
+}
+.sb-chip:hover:not(.used) { background:rgba(74,124,247,.26); transform:translateY(-2px) }
+.sb-chip.used { opacity:.22; cursor:default; transform:none }
+.sb-chip.in-zone {
+  background: rgba(45,212,191,.16);
+  border-color: rgba(45,212,191,.35);
+  color: var(--ok2);
+}
+.sb-chip.in-zone:hover { background:rgba(45,212,191,.26) }
+
+/* ── ERROR SPOTTING ── */
+.es-text {
+  font-family: var(--fi);
+  font-size: 1rem;
+  line-height: 2;
+  padding: 16px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r3);
+}
+.word-sp {
+  cursor: pointer;
+  padding: 1px 2px;
+  border-radius: 3px;
+  transition: background .15s;
+}
+.word-sp:hover { background:rgba(212,168,67,.2) }
+.word-sp.sel   { background:rgba(244,101,122,.25); color:var(--err2) }
+.word-sp.wOK   { background:rgba(45,212,191,.25); color:var(--ok2) }
+.word-sp.wBAD  { background:rgba(244,101,122,.15); color:var(--err); text-decoration:line-through }
+
+/* ── LISTENING ── */
+.listen-card {
+  background: linear-gradient(135deg, rgba(251,191,36,.06), rgba(251,191,36,.02));
+  border: 1px solid rgba(251,191,36,.2);
+  border-radius: var(--r4);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.listen-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 40px;
+}
+.wave-bar {
+  width: 4px;
+  background: var(--amber);
+  border-radius: 2px;
+  animation: waveBar .8s ease-in-out infinite;
+}
+.wave-bar:nth-child(2) { animation-delay:.1s; height:28px }
+.wave-bar:nth-child(3) { animation-delay:.2s; height:36px }
+.wave-bar:nth-child(4) { animation-delay:.3s; height:22px }
+.wave-bar:nth-child(5) { animation-delay:.4s; height:32px }
+.wave-bar:nth-child(1) { height:18px }
+.wave-bar:nth-child(6) { animation-delay:.15s; height:26px }
+.wave-bar.paused { animation-play-state:paused; transform:scaleY(.3) }
+
+.listen-txt {
+  font-family: var(--fi);
+  font-size: 1.05rem;
+  color: var(--t2);
+  font-style: italic;
+  display: none;
+}
+.listen-txt.revealed { display:block }
+
+.btn-listen {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  background: rgba(251,191,36,.12);
+  border: 1px solid rgba(251,191,36,.3);
+  border-radius: var(--r5);
+  color: var(--amber);
+  font-family: var(--fh);
+  font-size: .88rem;
+  font-weight: 700;
+  transition: all .2s;
+  letter-spacing: .03em;
+}
+.btn-listen:hover { background:rgba(251,191,36,.2); border-color:rgba(251,191,36,.5) }
+.btn-listen.playing { animation: pulse 1.2s ease-in-out infinite }
+
+/* ── SPEAKING ── */
+.speak-card {
+  background: linear-gradient(135deg, rgba(251,113,133,.06), rgba(251,113,133,.02));
+  border: 1px solid rgba(251,113,133,.2);
+  border-radius: var(--r4);
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.speak-prompt {
+  font-family: var(--fi);
+  font-size: 1.15rem;
+  font-style: italic;
+  color: var(--t1);
+  padding: 14px 18px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r3);
+  width: 100%;
+  text-align: center;
+}
+
+.speak-label {
+  font-size: .75rem;
+  color: var(--t3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+.btn-mic {
+  width: 70px; height: 70px;
+  border-radius: 50%;
+  background: rgba(251,113,133,.15);
+  border: 2px solid rgba(251,113,133,.35);
+  color: var(--rose);
+  font-size: 1.8rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.btn-mic:hover { background:rgba(251,113,133,.25); transform:scale(1.07) }
+.btn-mic.recording {
+  background: rgba(251,113,133,.3);
+  border-color: var(--rose);
+  animation: recordPulse 1s ease-in-out infinite;
+  box-shadow: 0 0 24px rgba(251,113,133,.3);
+}
+
+.speak-status {
+  font-size: .8rem;
+  color: var(--t3);
+  font-weight: 500;
+  min-height: 18px;
+}
+.speak-status.active { color: var(--rose) }
+
+.speak-transcript {
+  width: 100%;
+  min-height: 36px;
+  padding: 10px 14px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--r2);
+  font-family: var(--fi);
+  font-size: .9rem;
+  color: var(--t2);
+  font-style: italic;
+  text-align: center;
+}
+
+.speak-fallback {
+  display: none;
+  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+}
+.speak-fallback.visible { display:flex }
+
+/* ── SHARED exercise buttons ── */
+.btn-check {
+  width: 100%;
+  padding: 13px 20px;
+  border-radius: var(--r5);
+  background: linear-gradient(135deg, var(--blue) 0%, #3560d4 100%);
+  color: #fff;
+  font-family: var(--fh);
+  font-size: .9rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  box-shadow: 0 4px 16px var(--blue-g);
+  transition: all .2s;
+}
+.btn-check:hover { transform:translateY(-2px); box-shadow:0 8px 24px var(--blue-g) }
+.btn-check.sec {
+  background: var(--g1);
+  color: var(--t2);
+  border: 1px solid rgba(255,255,255,.1);
+  box-shadow: none;
+}
+
+/* ── Feedback ── */
+.ex-fb {
+  border-radius: var(--r3);
+  padding: 14px 16px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  animation: scIn .26s ease;
+}
+.ex-fb.show { display:flex }
+.ex-fb.ok   { background:rgba(45,212,191,.1); border:1px solid rgba(45,212,191,.3) }
+.ex-fb.ng   { background:rgba(244,101,122,.1); border:1px solid rgba(244,101,122,.3) }
+.fb-top  { display:flex; align-items:center; gap:10px }
+.fb-icon { font-size:1.4rem }
+.fb-title{ font-family:var(--fh); font-size:.92rem; font-weight:700 }
+.fb-body { font-size:.8rem; color:var(--t2); line-height:1.6 }
+.fb-rew  { display:flex; gap:8px; flex-wrap:wrap; margin-top:2px }
+.rew-tag { display:flex; align-items:center; gap:4px; padding:3px 10px; border-radius:var(--r6); font-size:.75rem; font-weight:700 }
+.rw-c  { background:rgba(212,168,67,.15); color:var(--gold); border:1px solid rgba(212,168,67,.25) }
+.rw-x  { background:rgba(167,139,250,.15); color:var(--purp); border:1px solid rgba(167,139,250,.25) }
+.rw-g  { background:rgba(251,191,36,.15); color:var(--amber); border:1px solid rgba(251,191,36,.25) }
+
+.btn-next {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--r5);
+  font-family: var(--fh);
+  font-size: .92rem;
+  font-weight: 700;
+  color: var(--ink);
+  display: none;
+  transition: all .2s;
+  letter-spacing: .03em;
+}
+.btn-next.show { display:block; animation:fadeUp .26s ease }
+.btn-next.ok { background:linear-gradient(135deg, var(--ok), #18a890); box-shadow:0 4px 16px var(--ok-g) }
+.btn-next.ng { background:linear-gradient(135deg, var(--gold), #b8892e); box-shadow:0 4px 16px var(--gold-g); color:var(--ink) }
+.btn-next:hover { transform:translateY(-2px) }
+
+/* ═══════════════════════════════════════════════════════════
+   EXERCISE COMPLETE
+   ═══════════════════════════════════════════════════════════ */
+#s-done {
+  position: fixed; inset:0; z-index:900;
+  display: none;
+  align-items: center; justify-content: center;
+  background: rgba(4,4,10,.9);
+  backdrop-filter: blur(18px);
+  padding: 20px;
+}
+#s-done.show { display:flex; animation:fadeIn .3s ease }
+
+.done-card {
+  background: linear-gradient(160deg, var(--ink4), var(--ink3));
+  border: 1px solid rgba(212,168,67,.2);
+  border-radius: var(--r5);
+  padding: 36px 28px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+  animation: popIn .42s ease;
+  box-shadow: var(--shg), var(--sh3);
+}
+
+.done-stars { display:flex; gap:10px; font-size:2.6rem }
+.d-star { animation:starPop .4s ease forwards; opacity:0 }
+.d-star:nth-child(1){ animation-delay:.1s }
+.d-star:nth-child(2){ animation-delay:.3s }
+.d-star:nth-child(3){ animation-delay:.5s }
+
+.done-title { font-family:var(--fh); font-size:1.6rem; font-weight:700; letter-spacing:-.01em }
+.done-sub   { font-family:var(--fi); font-size:.88rem; color:var(--t2); margin-top:-10px; font-style:italic }
+
+.done-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; width:100% }
+.ds-cell {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r3);
+  padding: 13px 8px;
+  display: flex; flex-direction:column; align-items:center; gap:4px;
+}
+.ds-val { font-family:var(--fh); font-size:1.3rem; font-weight:700 }
+.ds-lbl { font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--t3) }
+
+/* ═══════════════════════════════════════════════════════════
+   GYM SCREEN
+   ═══════════════════════════════════════════════════════════ */
+.gym-hero {
+  padding: 28px 20px 16px;
+  text-align: center;
+  display: flex; flex-direction:column; align-items:center; gap:10px;
+  background: linear-gradient(180deg, rgba(251,191,36,.04) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+.gym-ico { font-size:3rem; display:block }
+.gym-title { font-family:var(--fh); font-size:1.25rem; font-weight:700; letter-spacing:-.01em }
+.gym-desc  { font-size:.84rem; color:var(--t2); line-height:1.65; max-width:290px }
+
+.wk-list  { padding:0 16px 16px; display:flex; flex-direction:column; gap:8px }
+.wk-item {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: var(--r3);
+  padding: 12px 14px;
+  display: flex; align-items:center; gap:11px;
+}
+.wk-ico { width:34px; height:34px; border-radius:9px; background:rgba(244,101,122,.12); border:1px solid rgba(244,101,122,.2); display:flex; align-items:center; justify-content:center; font-size:.95rem; flex-shrink:0 }
+.wk-info { flex:1; min-width:0 }
+.wk-q  { font-size:.84rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.wk-id { font-size:.62rem; color:var(--t3); margin-top:2px; text-transform:uppercase; letter-spacing:.06em }
+
+.btn-gym {
+  margin: 0 16px 16px;
+  width: calc(100% - 32px);
+  padding: 15px;
+  background: linear-gradient(135deg, var(--amber), #d97706);
+  border-radius: var(--r5);
+  color: var(--ink);
+  font-family: var(--fh);
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .03em;
+  box-shadow: 0 4px 20px rgba(251,191,36,.25);
+  transition: all .2s;
+}
+.btn-gym:hover { transform:translateY(-2px); box-shadow:0 8px 28px rgba(251,191,36,.35) }
+
+.gym-empty { padding:52px 20px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:14px }
+.ge-ico   { font-size:4rem }
+.ge-title { font-family:var(--fh); font-size:1.2rem; font-weight:700 }
+.ge-desc  { font-size:.84rem; color:var(--t2); line-height:1.65; max-width:270px }
+
+/* ═══════════════════════════════════════════════════════════
+   PROFILE SCREEN
+   ═══════════════════════════════════════════════════════════ */
+.pro-hero {
+  padding: 28px 20px 20px;
+  display: flex; flex-direction:column; align-items:center; gap:14px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(212,168,67,.04) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(255,255,255,.04);
+}
+
+.av-wrap { position:relative; display:inline-block }
+.av-ring {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  border: 2.5px solid var(--gold);
+  box-shadow: 0 0 28px var(--gold-g), inset 0 0 0 3px var(--ink);
+  display: flex; align-items:center; justify-content:center;
+  font-size: 2.4rem;
+  transition: all .3s;
+}
+.av-lv {
+  position: absolute;
+  bottom: 0; right: -4px;
+  background: var(--gold);
+  color: var(--ink);
+  font-family: var(--fh);
+  font-size: .58rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--r6);
+  border: 2px solid var(--ink);
+  letter-spacing:.04em;
+}
+/* Avatar skin backgrounds */
+.sk-default  { background:linear-gradient(145deg,#1e1a2e,#12103d) }
+.sk-hacker   { background:linear-gradient(145deg,#0a1e0e,#051208) }
+.sk-fire     { background:linear-gradient(145deg,#2e0a08,#3e1500) }
+.sk-ocean    { background:linear-gradient(145deg,#061828,#04102e) }
+.sk-galaxy   { background:linear-gradient(145deg,#110a30,#0a0620) }
+.sk-dragon   { background:linear-gradient(145deg,#2e0808,#1a0404) }
+
+.pro-name  { font-family:var(--fh); font-size:1.5rem; font-weight:700; letter-spacing:-.01em }
+.pro-title { font-family:var(--fi); font-size:.82rem; color:var(--t2); font-style:italic }
+
+.pro-stats { display:flex; gap:9px; flex-wrap:wrap; justify-content:center }
+.pro-stat {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r3);
+  padding: 10px 14px;
+  display: flex; flex-direction:column; align-items:center; gap:2px;
+  min-width: 72px;
+}
+.ps-val { font-family:var(--fh); font-size:1.1rem; font-weight:700 }
+.ps-lbl { font-size:.58rem; font-weight:700; text-transform:uppercase; letter-spacing:.1em; color:var(--t3) }
+
+.pro-section { margin:0 16px 16px }
+.sec-lbl { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--t3); margin-bottom:12px; padding:0 2px }
+
+.xp-card {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r3);
+  padding: 15px;
+}
+.xp-row { display:flex; justify-content:space-between; font-size:.75rem; font-weight:600; color:var(--t2); margin-bottom:9px }
+.xp-track { height:8px; background:rgba(255,255,255,.07); border-radius:4px; overflow:hidden }
+.xp-fill  { height:100%; background:linear-gradient(90deg,var(--purp),#c084fc); border-radius:4px; transition:width 1.2s ease }
+
+/* Hexagonal radar — 6 axes */
+.radar-wrap { display:flex; justify-content:center; padding:8px 0 4px }
+.radar-legend {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.rl-item { display:flex; align-items:center; gap:7px; font-size:.76rem; font-weight:500 }
+.rl-dot  { width:8px; height:8px; border-radius:50%; flex-shrink:0 }
+.rl-bar  { flex:1; height:4px; background:rgba(255,255,255,.08); border-radius:2px; overflow:hidden }
+.rl-fill { height:100%; border-radius:2px; transition:width 1s ease }
+.rl-pct  { font-size:.65rem; color:var(--t3); min-width:28px; text-align:right; font-family:var(--fh) }
+
+/* ═══════════════════════════════════════════════════════════
+   SHOP SCREEN
+   ═══════════════════════════════════════════════════════════ */
+.bal-banner {
+  margin: 16px;
+  background: linear-gradient(135deg, rgba(212,168,67,.1), rgba(212,168,67,.04));
+  border: 1px solid rgba(212,168,67,.25);
+  border-radius: var(--r4);
+  padding: 16px 18px;
+  display: flex; align-items:center; gap:14px;
+}
+.bb-ico  { font-size:1.8rem }
+.bb-lbl  { font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:var(--t3) }
+.bb-val  { font-family:var(--fh); font-size:1.5rem; font-weight:700; color:var(--gold) }
+
+.shop-section-lbl { padding:0 18px 10px; font-size:.65rem; font-weight:700; text-transform:uppercase; letter-spacing:.14em; color:var(--t3) }
+
+.shop-grid { display:grid; grid-template-columns:1fr 1fr; gap:11px; padding:0 16px 16px }
+
+.shop-card {
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r4);
+  padding: 18px 12px;
+  display: flex; flex-direction:column; align-items:center; gap:9px;
+  text-align: center;
+  transition: all .22s;
+}
+.shop-card:hover { border-color:rgba(255,255,255,.14); transform:translateY(-3px); box-shadow:var(--sh2) }
+.shop-card.owned  { border-color:rgba(45,212,191,.25); background:rgba(45,212,191,.03) }
+.shop-card.equip  { border-color:rgba(212,168,67,.4); background:rgba(212,168,67,.05); box-shadow:var(--shg) }
+
+.sc-av {
+  width: 66px; height:66px;
+  border-radius: 50%;
+  display: flex; align-items:center; justify-content:center;
+  font-size: 2rem;
+  transition: transform .22s;
+  border: 2px solid rgba(255,255,255,.1);
+}
+.shop-card:hover .sc-av { transform:scale(1.1) }
+.sc-name { font-family:var(--fh); font-size:.85rem; font-weight:700 }
+.sc-desc { font-size:.66rem; color:var(--t3); line-height:1.5 }
+.sc-price { display:flex; align-items:center; gap:4px; font-family:var(--fh); font-size:.85rem; font-weight:700; color:var(--gold) }
+
+.sh-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: var(--r5);
+  font-family: var(--fh);
+  font-size: .75rem;
+  font-weight: 700;
+  transition: all .18s;
+  letter-spacing: .04em;
+}
+.sb-buy    { background:linear-gradient(135deg,var(--gold),#9e6d1a); color:var(--ink) }
+.sb-buy:hover { transform:scale(1.04) }
+.sb-equip  { background:rgba(74,124,247,.18); color:var(--blue2); border:1px solid rgba(74,124,247,.3) }
+.sb-equip:hover { background:var(--blue); color:#fff }
+.sb-equipped{ background:rgba(212,168,67,.15); color:var(--gold2); cursor:default; border:1px solid rgba(212,168,67,.25) }
+.sb-owned  { background:rgba(45,212,191,.12); color:var(--ok2); cursor:default; border:1px solid rgba(45,212,191,.2) }
+.sh-btn:disabled { opacity:.4; cursor:not-allowed }
+
+/* ═══════════════════════════════════════════════════════════
+   RANK SCREEN
+   ═══════════════════════════════════════════════════════════ */
+.podium-area {
+  padding: 24px 20px 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 10px;
+  min-height: 160px;
+}
+.pod-pos { display:flex; flex-direction:column; align-items:center; gap:5px }
+.pod-av { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.35rem; border:2px solid rgba(255,255,255,.1); background:var(--g2) }
+.pod-name { font-size:.66rem; font-weight:700; max-width:64px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--t2) }
+.pod-xp   { font-size:.6rem; color:var(--t3); font-family:var(--fh) }
+.pod-blk  { border-radius:4px 4px 0 0; width:64px; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:800 }
+.pb1 { height:90px; background:linear-gradient(180deg,#d4a843,#8c6e1f) }
+.pb2 { height:70px; background:linear-gradient(180deg,#8a9aaa,#4a5a6a) }
+.pb3 { height:54px; background:linear-gradient(180deg,#9a6a3a,#5a3a1a) }
+
+.rank-note { padding:10px 18px 2px; text-align:center; font-size:.82rem; color:var(--t2); font-weight:500 }
+
+.rank-tbl {
+  margin: 12px 16px;
+  background: var(--g1);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--r4);
+  overflow: hidden;
+}
+.rank-hd { display:grid; grid-template-columns:36px 1fr 72px; padding:9px 14px; border-bottom:1px solid rgba(255,255,255,.05); font-size:.62rem; font-weight:700; text-transform:uppercase; letter-spacing:.12em; color:var(--t3) }
+.rank-row { display:grid; grid-template-columns:36px 1fr 72px; padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.03); align-items:center; gap:8px; transition:background .15s }
+.rank-row:last-child { border-bottom:none }
+.rank-row:hover { background:rgba(255,255,255,.025) }
+.rank-row.you { background:rgba(212,168,67,.07); border-left:2px solid var(--gold) }
+.rr-pos { font-family:var(--fh); font-size:.85rem; font-weight:700; color:var(--t3); text-align:center }
+.rr-pos.g { color:var(--gold) }.rr-pos.s { color:#8a9aaa }.rr-pos.b { color:#9a6a3a }
+.rr-player { display:flex; align-items:center; gap:9px; min-width:0 }
+.rr-av { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.9rem; flex-shrink:0; background:var(--g2) }
+.rr-nm { font-size:.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.rr-xp { font-family:var(--fh); font-size:.85rem; font-weight:700; color:var(--purp); text-align:right }
+
+/* ═══════════════════════════════════════════════════════════
+   CERTIFICATE MODAL
+   ═══════════════════════════════════════════════════════════ */
+#s-cert {
+  position:fixed; inset:0; z-index:1000;
+  display:none; align-items:center; justify-content:center;
+  background:rgba(4,4,10,.96);
+  backdrop-filter:blur(22px);
+  padding:16px;
+  overflow-y:auto;
+}
+#s-cert.show { display:flex; animation:fadeIn .3s ease }
+.cert-card {
+  background:linear-gradient(160deg,var(--ink4),var(--ink3));
+  border:1px solid rgba(212,168,67,.35);
+  border-radius:var(--r5);
+  padding:28px 22px;
+  max-width:480px; width:100%;
+  display:flex; flex-direction:column; align-items:center; gap:14px;
+  text-align:center;
+  box-shadow:0 0 80px rgba(212,168,67,.1),var(--sh3);
+  animation:popIn .38s ease;
+  margin:auto;
+}
+.cert-trophy { font-size:3.2rem; animation:bounce 2s ease-in-out infinite }
+.cert-title { font-family:var(--fh); font-size:1.4rem; font-weight:700; color:var(--gold) }
+.cert-text  { font-size:.82rem; color:var(--t2); line-height:1.65; max-width:340px }
+.cert-prev  { width:100%; border-radius:var(--r3); overflow:hidden; border:1px solid rgba(212,168,67,.25); box-shadow:0 4px 24px rgba(0,0,0,.5) }
+.btn-cert-dl { width:100%; padding:14px; background:linear-gradient(135deg,var(--gold),#9e6d1a); border-radius:var(--r5); color:var(--ink); font-family:var(--fh); font-size:.9rem; font-weight:800; letter-spacing:.05em; transition:all .2s }
+.btn-cert-dl:hover { transform:translateY(-2px); box-shadow:0 8px 24px var(--gold-g) }
+.btn-cert-cl { width:100%; padding:11px; border-radius:var(--r5); border:1px solid rgba(255,255,255,.09); color:var(--t2); font-family:var(--fh); font-size:.84rem; font-weight:700; transition:all .18s }
+.btn-cert-cl:hover { border-color:var(--gold-g); color:var(--gold) }
+
+@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+/* ═══════════════════════════════════════════════════════════
+   TOASTS + COIN FLOAT
+   ═══════════════════════════════════════════════════════════ */
+#toast-box { position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:2000; display:flex; flex-direction:column; gap:7px; pointer-events:none; width:calc(100% - 36px); max-width:350px }
+.toast { padding:10px 15px; border-radius:var(--r3); font-size:.84rem; font-weight:600; display:flex; align-items:center; gap:9px; box-shadow:var(--sh2); animation:slideDown .28s ease; backdrop-filter:blur(12px) }
+.t-ok   { background:rgba(45,212,191,.92); color:var(--ink); border:1px solid var(--ok) }
+.t-err  { background:rgba(244,101,122,.92); color:#fff;       border:1px solid var(--err) }
+.t-inf  { background:rgba(74,124,247,.92);  color:#fff;       border:1px solid var(--blue) }
+.t-gold { background:rgba(15,12,25,.96);    color:var(--gold);border:1px solid rgba(212,168,67,.35) }
+
+.coin-fx { position:fixed; font-family:var(--fh); font-size:1.15rem; font-weight:700; color:var(--gold); pointer-events:none; z-index:3000; animation:coinRise .88s ease-out forwards }
+
+/* ═══════════════════════════════════════════════════════════
+   MISC
+   ═══════════════════════════════════════════════════════════ */
+.divider { height:1px; background:rgba(255,255,255,.05); margin:0 16px 16px }
+
+/* Logout */
+.btn-logout {
+  margin: 0 16px 24px;
+  width: calc(100% - 32px);
+  padding: 12px;
+  border-radius: var(--r5);
+  border: 1.5px solid rgba(244,101,122,.3);
+  color: var(--err);
+  font-family: var(--fh);
+  font-size: .84rem;
+  font-weight: 700;
+  transition: all .2s;
+  letter-spacing: .04em;
+  background: rgba(244,101,122,.06);
+}
+.btn-logout:hover { background:rgba(244,101,122,.15); border-color:var(--err); box-shadow:0 0 16px rgba(244,101,122,.15) }
+.nav-av-wrap { position:relative; display:inline-block; line-height:1 }
+.nav-av-wrap::after {
+  content:'';
+  position:absolute;
+  bottom:-1px; right:-2px;
+  width:7px; height:7px;
+  background: var(--ok);
+  border-radius:50%;
+  border:1.5px solid rgba(8,8,15,1);
+}
+.spinner { width:34px; height:34px; border:3px solid rgba(255,255,255,.07); border-top-color:var(--gold); border-radius:50%; animation:spin .7s linear infinite; margin:40px auto }
+</style>
+</head>
+<body>
+<div id="toast-box"></div>
+
+<!-- Fixed user identity chip (shown after login) -->
+<div id="user-chip" class="user-chip off">
+  <div class="uc-av" id="uc-av">🐂</div>
+  <div class="uc-info">
+    <div class="uc-name" id="uc-name">Student</div>
+    <div class="uc-status">● Online</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     SPLASH
+     ════════════════════════════════════════════════════ -->
+<section id="s-splash" class="scr nonav active">
+  <div class="onb">
+    <div class="onb-logo">🐂</div>
+    <div class="onb-wordmark">
+      <h1 class="onb-title">Bull <span>English</span><br/>Academy</h1>
+      <p class="onb-tagline">Mastery through practice · A1 → C2</p>
+    </div>
+    <div class="onb-form">
+      <div class="fg">
+        <label class="flbl" for="inp-name">Your Name</label>
+        <input class="finp" id="inp-name" type="text" placeholder="Enter your name…" maxlength="30" autocomplete="off"/>
+      </div>
+      <div class="fg">
+        <label class="flbl">Starting Level</label>
+        <div class="lvl-grid" id="lvl-grid">
+          <button class="lv-btn sel" data-lv="A1">A1<br/>Beginner</button>
+          <button class="lv-btn" data-lv="A2">A2<br/>Elementary</button>
+          <button class="lv-btn" data-lv="B1">B1<br/>Intermediate</button>
+          <button class="lv-btn" data-lv="B2">B2<br/>Upper-Int.</button>
+          <button class="lv-btn" data-lv="C1">C1<br/>Advanced</button>
+          <button class="lv-btn" data-lv="C2">C2<br/>Mastery</button>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-start">🚀 Start Learning</button>
+    </div>
+    <p class="onb-foot">Progress is saved locally in your browser.<br/>Speaking requires Chrome / Edge with microphone permission.</p>
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════════════
+     NAVIGATION
+     ════════════════════════════════════════════════════ -->
+<nav id="nav" class="off">
+  <button class="nb" data-t="s-map"><span class="ni">🗺️</span><span>Map</span></button>
+  <button class="nb" data-t="s-gym"><span class="ni">💪</span><span>Gym</span><span class="nbadge off" id="gbadge">!</span></button>
+  <button class="nb" data-t="s-pro" id="nb-pro">
+    <span class="ni nav-av-wrap"><span id="nav-av">👤</span></span>
+    <span id="nav-nm">Profile</span>
+  </button>
+  <button class="nb" data-t="s-shop"><span class="ni">🛒</span><span>Shop</span></button>
+  <button class="nb" data-t="s-rank"><span class="ni">🏆</span><span>Rank</span></button>
+</nav>
+
+<!-- MAP -->
+<section id="s-map" class="scr">
+  <div class="hdr">
+    <div class="hdr-row">
+      <div><h2 class="hdr-title">World Map</h2><p class="hdr-sub">Choose your next challenge</p></div>
+      <div class="hud">
+        <div class="pill pill-gold">🪙 <span id="hc-map">0</span></div>
+        <div class="pill pill-purp">⚡ <span id="hx-map">0</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="map-body" id="map-body"></div>
+</section>
+
+<!-- GYM -->
+<section id="s-gym" class="scr">
+  <div class="hdr"><div class="hdr-row"><div><h2 class="hdr-title">The Gym</h2><p class="hdr-sub">Train your weaknesses</p></div><div class="hud"><div class="pill pill-gold">🪙 <span id="hc-gym">0</span></div></div></div></div>
+  <div id="gym-body"></div>
+</section>
+
+<!-- PROFILE -->
+<section id="s-pro" class="scr">
+  <div class="hdr"><div class="hdr-row"><h2 class="hdr-title">Profile</h2></div></div>
+  <div id="pro-body"></div>
+</section>
+
+<!-- SHOP -->
+<section id="s-shop" class="scr">
+  <div class="hdr"><div class="hdr-row"><h2 class="hdr-title">Bull Shop</h2></div></div>
+  <div id="shop-body"></div>
+</section>
+
+<!-- RANK -->
+<section id="s-rank" class="scr">
+  <div class="hdr"><div class="hdr-row"><h2 class="hdr-title">Rankings</h2></div></div>
+  <div id="rank-body"></div>
+</section>
+
+<!-- EXERCISE -->
+<section id="s-ex" class="scr nonav">
+  <div class="ex-hdr">
+    <button class="ex-close-btn" id="ex-close">✕</button>
+    <div class="ex-prog">
+      <div class="ex-prog-track"><div class="ex-prog-fill" id="ep-fill" style="width:0%"></div></div>
+      <div class="ex-prog-lbl" id="ep-lbl">1 / 1</div>
+    </div>
+    <div class="ex-lives" id="ex-lives">❤️❤️❤️</div>
+  </div>
+  <div class="ex-body" id="ex-body"></div>
+</section>
+
+<!-- DONE OVERLAY -->
+<div id="s-done">
+  <div class="done-card">
+    <div class="done-stars"><span class="d-star" id="ds1">⭐</span><span class="d-star" id="ds2">⭐</span><span class="d-star" id="ds3">⭐</span></div>
+    <h2 class="done-title" id="d-title">Complete!</h2>
+    <p class="done-sub" id="d-sub">Great work!</p>
+    <div class="done-stats">
+      <div class="ds-cell"><div class="ds-val" id="d-acc">0%</div><div class="ds-lbl">Accuracy</div></div>
+      <div class="ds-cell"><div class="ds-val" id="d-xp" style="color:var(--purp)">+0</div><div class="ds-lbl">XP</div></div>
+      <div class="ds-cell"><div class="ds-val" id="d-cn" style="color:var(--gold)">+0</div><div class="ds-lbl">Coins</div></div>
+    </div>
+    <button class="btn-primary" id="d-cont">Continue →</button>
+  </div>
+</div>
+
+<!-- CERTIFICATE MODAL -->
+<div id="s-cert">
+  <div class="cert-card">
+    <div class="cert-trophy">🏅</div>
+    <h2 class="cert-title">Certificate Earned!</h2>
+    <p class="cert-text">You passed the Boss Exam with flying colours. Download your official CEFR certificate.</p>
+    <div class="cert-prev"><canvas id="cert-canvas" width="540" height="306"></canvas></div>
+    <button class="btn-cert-dl" id="btn-cert-dl">⬇️ Download Certificate</button>
+    <button class="btn-cert-cl" id="btn-cert-cl">Close</button>
+  </div>
+</div>
+
+<script>
+"use strict";
+/* ═══════════════════════════════════════════════════════════
+   SYLLABUS DB  (condensed — structure operacional)
+   3 Worlds: A1, B1, C1
+   Each: 1 lesson zone + 1 boss zone
+   6 exercise types including listening & speaking
+   ═══════════════════════════════════════════════════════════ */
+const DB = { worlds: [
+
+/* ──────────────── WORLD 1: A1 ──────────────── */
+{ id:"W1", name:"Welcome Center", cefr:"A1", icon:"🏫", zones:[
+
+  { id:"W1Z1", name:"Greetings & Basics", icon:"👋", type:"lesson", exercises:[
+    { id:"E001", type:"mc", skill:"vocabulary",
+      q:"Select the correct greeting for 8:00 AM.",
+      opts:[{t:"Good evening",c:false},{t:"Good morning",c:true},{t:"Good night",c:false},{t:"Goodbye",c:false}],
+      expl:"'Good morning' is used from sunrise until noon." },
+
+    { id:"E002", type:"dd", skill:"grammar",
+      q:"Match each pronoun to the correct form of 'To Be'.",
+      drag:["am","is","are"],
+      tgts:[{pfx:"I →",ok:"am"},{pfx:"She →",ok:"is"},{pfx:"We →",ok:"are"}],
+      expl:"I → am | He/She/It → is | You/We/They → are" },
+
+    { id:"E003", type:"listening", skill:"listening",
+      q:"Listen to the sentence and choose what you heard.",
+      audio:"My name is Sarah and I am from London.",
+      opts:[
+        {t:"My name is Sara and I am from Boston.",c:false},
+        {t:"My name is Sarah and I am from London.",c:true},
+        {t:"My name is Sarah and I am from Paris.",c:false},
+        {t:"Her name is Sarah and she is from London.",c:false}
+      ],
+      expl:"The sentence said: 'My name is Sarah and I am from London.'" },
+
+    { id:"E004", type:"tf", skill:"grammar",
+      q:"Is the sentence 'She am a teacher.' grammatically correct?",
+      stmt:"She am a teacher.",
+      ans:false,
+      expl:"Incorrect. The right form is 'She IS a teacher.' (she → is, not am)." },
+
+    { id:"E005", type:"speaking", skill:"speaking",
+      q:"Say this sentence aloud as clearly as possible:",
+      prompt:"Hello! My name is [your name] and I am learning English.",
+      target:"hello my name is and i am learning english",
+      keywords:["hello","name","learning","english"],
+      expl:"A complete greeting includes: Hello + My name is + I am learning English." }
+  ]},
+
+  { id:"W1Z2", name:"Boss Exam A1", icon:"👑", type:"boss", cefr:"A1", exercises:[
+    { id:"E006", type:"mc", skill:"grammar",
+      q:"Choose the grammatically correct sentence:",
+      opts:[{t:"She are happy.",c:false},{t:"He is happy.",c:true},{t:"They is happy.",c:false},{t:"We am happy.",c:false}],
+      expl:"He/She/It always takes 'is'." },
+
+    { id:"E007", type:"sb", skill:"grammar",
+      q:"Build a complete self-introduction:",
+      words:["Hello","my","name","is","Sam","and","I","am","a","student"],
+      correct:"Hello my name is Sam and I am a student",
+      expl:"Introduction structure: Hello + my name is + [Name] + and I am + [role]." },
+
+    { id:"E008", type:"fib", skill:"vocabulary",
+      q:"Complete: 'Good ___, see you tomorrow!'",
+      blank:"night",
+      hint:"Evening farewell greeting.",
+      expl:"'Good night' is said when parting in the evening or before bed." },
+
+    { id:"E009", type:"listening", skill:"listening",
+      q:"Listen and select what you hear:",
+      audio:"There are three cats and two dogs in the garden.",
+      opts:[
+        {t:"There are two cats and three dogs in the garden.",c:false},
+        {t:"There are three cats and two birds in the garden.",c:false},
+        {t:"There are three cats and two dogs in the garden.",c:true},
+        {t:"There are three cats and two dogs in the park.",c:false}
+      ],
+      expl:"The sentence: 'There are three cats and two dogs in the garden.'" },
+
+    { id:"E010", type:"speaking", skill:"speaking",
+      q:"Read this sentence aloud clearly:",
+      prompt:"I have two sisters and one brother.",
+      target:"i have two sisters and one brother",
+      keywords:["two","sisters","one","brother"],
+      expl:"'Two sisters and one brother' — numbers and family vocabulary." }
+  ]}
+]},
+
+/* ──────────────── WORLD 2: B1 ──────────────── */
+{ id:"W2", name:"Conversation Hub", cefr:"B1", icon:"💬", zones:[
+
+  { id:"W2Z1", name:"Past & Opinions", icon:"💡", type:"lesson", exercises:[
+    { id:"E011", type:"mc", skill:"grammar",
+      q:"Choose the correct Present Perfect sentence:",
+      opts:[{t:"I have saw that film.",c:false},{t:"I have seen that film.",c:true},{t:"I have see that film.",c:false},{t:"I seen that film.",c:false}],
+      expl:"Present Perfect: have/has + PAST PARTICIPLE. see → seen (irregular)." },
+
+    { id:"E012", type:"dd", skill:"grammar",
+      q:"Match each verb to its Simple Past form:",
+      drag:["ate","drove","wrote"],
+      tgts:[{pfx:"eat →",ok:"ate"},{pfx:"drive →",ok:"drove"},{pfx:"write →",ok:"wrote"}],
+      expl:"eat → ate | drive → drove | write → wrote (all irregular)" },
+
+    { id:"E013", type:"listening", skill:"listening",
+      q:"Listen to the opinion and choose the best response:",
+      audio:"In my opinion, social media has both positive and negative effects on society.",
+      opts:[
+        {t:"I agree. It helps people connect but can also cause anxiety.",c:true},
+        {t:"Yes, social media is always completely positive.",c:false},
+        {t:"No, social media has no effect on society at all.",c:false},
+        {t:"I disagree because social media does not exist.",c:false}
+      ],
+      expl:"The speaker states both positive and negative effects — a balanced response agrees with this nuance." },
+
+    { id:"E014", type:"es", skill:"grammar",
+      q:"Click the word containing a grammatical error:",
+      text:"She has went to the supermarket twice this week.",
+      err:"went", fix:"gone",
+      expl:"After 'has' (Present Perfect), use the past participle 'gone', not 'went'." },
+
+    { id:"E015", type:"speaking", skill:"speaking",
+      q:"Express your opinion on this topic:",
+      prompt:"Do you think technology helps students learn better?",
+      target:"technology helps students learn",
+      keywords:["technology","students","learn"],
+      expl:"Use: 'I think / I believe + that + [opinion].' Any mention of technology, students, and learning is accepted." }
+  ]},
+
+  { id:"W2Z2", name:"Boss Exam B1", icon:"👑", type:"boss", cefr:"B1", exercises:[
+    { id:"E016", type:"mc", skill:"grammar",
+      q:"Select the correct Third Conditional sentence:",
+      opts:[{t:"If I study harder, I will pass.",c:false},{t:"If I studied harder, I would pass.",c:false},{t:"If I had studied harder, I would have passed.",c:true},{t:"If I had studied harder, I would pass.",c:false}],
+      expl:"3rd Conditional: If + Past Perfect → would have + Past Participle." },
+
+    { id:"E017", type:"sb", skill:"grammar",
+      q:"Build: negative Present Perfect",
+      words:["He","hasn't","slept","for","three","days"],
+      correct:"He hasn't slept for three days",
+      expl:"Present Perfect negative: Subject + hasn't + past participle + for + duration." },
+
+    { id:"E018", type:"fib", skill:"vocabulary",
+      q:"In my ___, social media has changed communication significantly.",
+      blank:"opinion",
+      hint:"Your personal view or perspective.",
+      expl:"'In my opinion' is the standard phrase for introducing a personal view." },
+
+    { id:"E019", type:"listening", skill:"listening",
+      q:"Listen and identify the tense used:",
+      audio:"By the time she arrived, the meeting had already finished.",
+      opts:[
+        {t:"Simple Past only",c:false},
+        {t:"Past Perfect with Simple Past",c:true},
+        {t:"Present Perfect with Simple Past",c:false},
+        {t:"Past Continuous only",c:false}
+      ],
+      expl:"'Had finished' = Past Perfect; 'arrived' = Simple Past. Both tenses work together." },
+
+    { id:"E020", type:"speaking", skill:"speaking",
+      q:"Describe what you did yesterday. Say this sentence:",
+      prompt:"Yesterday, I studied English for two hours and then watched a film.",
+      target:"yesterday studied english two hours watched film",
+      keywords:["yesterday","studied","english","watched"],
+      expl:"Simple Past for completed past actions: studied, watched." }
+  ]}
+]},
+
+/* ──────────────── WORLD 3: C1 ──────────────── */
+{ id:"W3", name:"Scholar's Tower", cefr:"C1", icon:"🎓", zones:[
+
+  { id:"W3Z1", name:"Advanced Grammar", icon:"✍️", type:"lesson", exercises:[
+    { id:"E021", type:"es", skill:"grammar",
+      q:"Find the subtle error in this formal text:",
+      text:"The findings strongly infer that sustained aerobic exercise mitigates cognitive decline.",
+      err:"infer", fix:"imply",
+      expl:"Findings cannot 'infer' — only readers can infer. Findings 'imply' (suggest). Classic C1 confusion." },
+
+    { id:"E022", type:"mc", skill:"vocabulary",
+      q:"What does 'tendentious' mean?",
+      opts:[{t:"Extremely careful and thorough",c:false},{t:"Promoting a particular cause or viewpoint",c:true},{t:"Related to tendons and muscles",c:false},{t:"Prone to emotional outbursts",c:false}],
+      expl:"Tendentious = promoting a particular point of view; not objective or impartial." },
+
+    { id:"E023", type:"listening", skill:"listening",
+      q:"Listen to this academic extract and identify the rhetorical device:",
+      audio:"Not only did she fail to address the core argument, but she also ignored the most compelling evidence.",
+      opts:[
+        {t:"Hyperbole — extreme exaggeration for effect",c:false},
+        {t:"Anaphora — repetition at the start of clauses",c:false},
+        {t:"Correlative conjunction — Not only…but also structure",c:true},
+        {t:"Chiasmus — inverted parallel structure",c:false}
+      ],
+      expl:"'Not only…but also' is a correlative conjunction structure that adds emphasis and logical weight." },
+
+    { id:"E024", type:"fib", skill:"grammar",
+      q:"It is essential that she ___ present at the meeting. (formal subjunctive)",
+      blank:"be",
+      hint:"Subjunctive: base form, not 'is'.",
+      expl:"Formal subjunctive: It is essential/vital that + subject + BASE verb form (be, not is)." },
+
+    { id:"E025", type:"speaking", skill:"speaking",
+      q:"Paraphrase this formal sentence in simpler English:",
+      prompt:"The implementation of the initiative was subsequently terminated.",
+      target:"stopped cancelled ended programme project plan",
+      keywords:["stopped","cancelled","ended"],
+      expl:"'Terminated' = stopped/cancelled. 'Implementation' = putting into practice. A simpler version: 'The project was later stopped.'" }
+  ]},
+
+  { id:"W3Z2", name:"Boss Exam C1", icon:"👑", type:"boss", cefr:"C1", exercises:[
+    { id:"E026", type:"mc", skill:"grammar",
+      q:"Which construction is a formal inverted conditional?",
+      opts:[{t:"If I were you…",c:false},{t:"Were I to leave now…",c:true},{t:"Unless I leave now…",c:false},{t:"Provided that I leave…",c:false}],
+      expl:"'Were I to leave' is a formal inverted conditional (subject and auxiliary are inverted)." },
+
+    { id:"E027", type:"es", skill:"grammar",
+      q:"Find the error (subject-verb agreement):",
+      text:"The phenomena observed in this study is consistent with prior neuroplasticity research.",
+      err:"is", fix:"are",
+      expl:"'Phenomena' is the PLURAL of 'phenomenon'. Therefore: 'The phenomena…ARE consistent'." },
+
+    { id:"E028", type:"sb", skill:"grammar",
+      q:"Build using formal subjunctive:",
+      words:["It","is","vital","that","every","delegate","be","notified","in","advance"],
+      correct:"It is vital that every delegate be notified in advance",
+      expl:"Subjunctive: It is [adjective] that + subject + BASE verb (be, not is/are)." },
+
+    { id:"E029", type:"listening", skill:"listening",
+      q:"Listen to the extract and select the correct interpretation:",
+      audio:"Notwithstanding the committee's reservations, the proposal was unanimously ratified.",
+      opts:[
+        {t:"The committee's reservations caused the proposal to fail.",c:false},
+        {t:"Despite the committee's doubts, the proposal was approved by all.",c:true},
+        {t:"The committee had no reservations about the proposal.",c:false},
+        {t:"The proposal was ratified by most but not all members.",c:false}
+      ],
+      expl:"'Notwithstanding' = despite; 'ratified' = formally approved; 'unanimously' = by everyone." },
+
+    { id:"E030", type:"speaking", skill:"speaking",
+      q:"Use the word 'notwithstanding' in a sentence about education:",
+      prompt:"Make a sentence using: notwithstanding / challenge / students / succeed",
+      target:"notwithstanding students succeed challenge",
+      keywords:["notwithstanding","students","succeed"],
+      expl:"Example: 'Notwithstanding the challenges, students can succeed with the right support.'" }
+  ]}
+]}
+
+]};/* end DB */
+
+/* ═══════════════════════════════════════════════════════════
+   SHOP DB  (condensed)
+   ═══════════════════════════════════════════════════════════ */
+const SHOP = [
+  { id:"sk-default", name:"Classic Bull",  desc:"Your original avatar.",       price:0,   emoji:"🐂", css:"sk-default" },
+  { id:"sk-hacker",  name:"Hacker Cap",    desc:"Code your way to fluency.",   price:80,  emoji:"👨‍💻", css:"sk-hacker" },
+  { id:"sk-fire",    name:"Fire Scholar",  desc:"Burning with vocabulary.",    price:120, emoji:"🦊", css:"sk-fire" },
+  { id:"sk-ocean",   name:"Ocean Mind",    desc:"Deep as the sea, calm too.",  price:180, emoji:"🐋", css:"sk-ocean" },
+];
+
+/* ═══════════════════════════════════════════════════════════
+   SESSION  (6 radar skills: vocab, grammar, reading,
+   listening, speaking, writing)
+   ═══════════════════════════════════════════════════════════ */
+let S = {
+  profile:  { name:"", skin:"sk-default", joined: new Date().toISOString().split("T")[0] },
+  eco:      { coins:150, xp:0 },
+  radar:    { vocabulary:18, grammar:14, reading:12, listening:10, speaking:8, writing:10 },
+  prog:     { worlds:["W1"], zones:[], stars:{}, weak:[] },
+  inv:      { skins:["sk-default"] },
+  bots:     null
+};
+
+/* ═══════════════════════════════════════════════════════════
+   STORE
+   ═══════════════════════════════════════════════════════════ */
+const Store = {
+  K:"bull_v6",
+  save() {
+    try { localStorage.setItem(this.K, btoa(unescape(encodeURIComponent(JSON.stringify(S))))); }
+    catch(e) {}
+  },
+  load() {
+    try {
+      const r = localStorage.getItem(this.K);
+      if (!r) return false;
+      const p = JSON.parse(decodeURIComponent(escape(atob(r))));
+      if (!p || !p.profile) return false;
+      S.profile = Object.assign({}, S.profile, p.profile || {});
+      S.eco     = Object.assign({}, S.eco,     p.eco     || {});
+      S.radar   = Object.assign({}, S.radar,   p.radar   || {});
+      S.prog    = Object.assign({}, S.prog,    p.prog    || {});
+      S.inv     = Object.assign({}, S.inv,     p.inv     || {});
+      if (p.bots) S.bots = p.bots;
+      return true;
+    } catch(e) { return false; }
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   AUDIO
+   ═══════════════════════════════════════════════════════════ */
+const Aud = {
+  ctx: null,
+  init() { try { this.ctx = new(window.AudioContext || window.webkitAudioContext)(); } catch(e) {} },
+  _t(f, d, type="sine", v=.18) {
+    if (!this.ctx) return;
+    try {
+      const o = this.ctx.createOscillator(), g = this.ctx.createGain();
+      o.connect(g); g.connect(this.ctx.destination);
+      o.type = type; o.frequency.setValueAtTime(f, this.ctx.currentTime);
+      g.gain.setValueAtTime(v, this.ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001, this.ctx.currentTime + d);
+      o.start(); o.stop(this.ctx.currentTime + d);
+    } catch(e) {}
+  },
+  ok()   { this._t(520,.09); setTimeout(()=>this._t(660,.09),95); setTimeout(()=>this._t(790,.2),190); },
+  ng()   { this._t(200,.15,"sawtooth",.12); setTimeout(()=>this._t(150,.2,"sawtooth",.08),160); },
+  done() { [520,660,790,1050].forEach((f,i)=>setTimeout(()=>this._t(f,.18),i*95)); },
+  coin() { this._t(1050,.07); setTimeout(()=>this._t(1320,.12),70); }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   TOAST + COIN FX
+   ═══════════════════════════════════════════════════════════ */
+function toast(msg, cls="t-inf", ms=2700) {
+  const b = document.getElementById("toast-box");
+  const el = document.createElement("div");
+  el.className = "toast " + cls;
+  const icons = {"t-ok":"✅","t-err":"❌","t-inf":"ℹ️","t-gold":"🪙"};
+  el.innerHTML = `<span>${icons[cls]||"•"}</span><span>${msg}</span>`;
+  b.appendChild(el);
+  setTimeout(() => { el.style.opacity="0"; el.style.transform="translateY(-8px)"; setTimeout(()=>el.remove(),350); }, ms);
+}
+
+function coinFx(amt, x, y) {
+  const el = document.createElement("div");
+  el.className = "coin-fx";
+  el.textContent = `+${amt}🪙`;
+  el.style.left = (x - 28) + "px";
+  el.style.top  = (y - 18) + "px";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 900);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   ROUTER  ← THE FIX: pure .scr/.active, no ID overrides
+   ═══════════════════════════════════════════════════════════ */
+const Router = {
+  cur: null, prev: null,
+  init() {
+    document.querySelectorAll(".nb[data-t]").forEach(b => {
+      b.addEventListener("click", () => this.go(b.dataset.t));
+    });
+  },
+  go(id) {
+    if (this.cur === id) return;
+    this.prev = this.cur;
+    document.querySelectorAll(".scr").forEach(s => s.classList.remove("active"));
+    const el = document.getElementById(id);
+    if (!el) { console.error("Screen not found:", id); return; }
+    el.classList.add("active");
+    el.scrollTop = 0;
+    this.cur = id;
+    document.querySelectorAll(".nb").forEach(b => b.classList.toggle("on", b.dataset.t === id));
+    ({
+      "s-map":  () => MapS.render(),
+      "s-gym":  () => GymS.render(),
+      "s-pro":  () => ProS.render(),
+      "s-shop": () => ShopS.render(),
+      "s-rank": () => RankS.render()
+    })[id]?.();
+  },
+  openEx(zone) {
+    document.getElementById("nav").classList.add("off");
+    document.getElementById("user-chip").classList.add("off");
+    Ex.start(zone, false);
+    this.go("s-ex");
+  },
+  closeEx() {
+    document.getElementById("nav").classList.remove("off");
+    if (S.profile.name) document.getElementById("user-chip").classList.remove("off");
+    // Stop any speech
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    if (Ex._recog) { try { Ex._recog.stop(); } catch(e){} }
+    this.go(this.prev || "s-map");
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   MAP SCREEN
+   ═══════════════════════════════════════════════════════════ */
+const MapS = {
+  render() {
+    document.getElementById("hc-map").textContent = S.eco.coins;
+    document.getElementById("hx-map").textContent = S.eco.xp;
+    const body = document.getElementById("map-body");
+    body.innerHTML = "";
+    const wCls = { A1:"w-a1", B1:"w-b1", C1:"w-c1", A2:"w-a1", B2:"w-b1", C2:"w-c1" };
+
+    DB.worlds.forEach((world, wi) => {
+      const unlocked = S.prog.worlds.includes(world.id);
+      const done = world.zones.filter(z => S.prog.zones.includes(z.id)).length;
+
+      const card = document.createElement("div");
+      card.className = `world-card ${wCls[world.cefr]||"w-a1"}`;
+
+      const head = document.createElement("div");
+      head.className = "world-head";
+      head.innerHTML = `
+        <div class="world-gem">${unlocked ? world.icon : "🔒"}</div>
+        <div class="world-info">
+          <div class="world-name">${unlocked ? world.name : "🔒 " + world.name}</div>
+          <div class="world-cefr">${world.cefr} Level · ${done}/${world.zones.length} zones complete</div>
+        </div>
+        <span class="world-chev">▾</span>`;
+
+      const zonesDiv = document.createElement("div");
+      zonesDiv.className = "world-zones";
+
+      world.zones.forEach((zone, zi) => {
+        const prevDone = zi === 0 || S.prog.zones.includes(world.zones[zi-1].id);
+        const lck = !unlocked || !prevDone;
+        const zdone = S.prog.zones.includes(zone.id);
+        const stars = S.prog.stars[zone.id] || 0;
+        const boss = zone.type === "boss";
+        const starsStr = zdone ? "⭐".repeat(stars) + "☆".repeat(3-stars) : lck ? "" : "☆☆☆";
+
+        const row = document.createElement("div");
+        row.className = "zone-row" + (lck?" lck":"") + (zdone?" done":"") + (boss?" boss-zone":"");
+        row.innerHTML = `
+          <div class="zone-ico">${lck ? "🔒" : zone.icon}</div>
+          <div class="zone-info">
+            <div class="zone-name">${zone.name}</div>
+            <div class="zone-sub">${zone.exercises.length} exercises · ${boss ? "👑 Boss Exam" : "Lesson"}</div>
+          </div>
+          <div class="zone-stars">${starsStr}</div>`;
+
+        if (!lck) row.addEventListener("click", () => Router.openEx(zone));
+        else row.addEventListener("click", () => toast("Complete the previous zone first!", "t-inf"));
+        zonesDiv.appendChild(row);
+      });
+
+      head.addEventListener("click", () => {
+        if (!unlocked) { toast("Complete the previous world to unlock!", "t-inf"); return; }
+        card.classList.toggle("open");
+      });
+
+      card.appendChild(head);
+      card.appendChild(zonesDiv);
+      body.appendChild(card);
+
+      // Auto-open first incomplete unlocked world
+      if (unlocked && done < world.zones.length) {
+        const anyPrevComplete = wi === 0 || S.prog.zones.includes(DB.worlds[wi-1].zones[DB.worlds[wi-1].zones.length-1].id);
+        if (anyPrevComplete) card.classList.add("open");
+      }
+    });
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   EXERCISE ENGINE
+   ═══════════════════════════════════════════════════════════ */
+const Ex = {
+  zone:null, exs:[], idx:0, lives:3, ML:3,
+  nOk:0, tot:0, sXP:0, sCN:0, ans:false, gym:false,
+  _recog: null,
+  _synth: null,
+
+  /* flat exercise map */
+  _exMap: null,
+  getExMap() {
+    if (!this._exMap) {
+      this._exMap = {};
+      DB.worlds.forEach(w => w.zones.forEach(z => z.exercises.forEach(e => { this._exMap[e.id] = e; })));
+    }
+    return this._exMap;
+  },
+
+  start(zone, gym=false) {
+    this.zone=zone; this.exs=[...zone.exercises]; this.idx=0;
+    this.lives=this.ML; this.nOk=0; this.tot=0;
+    this.sXP=0; this.sCN=0; this.ans=false; this.gym=gym;
+    if (window.speechSynthesis) window.speechSynthesis.cancel();
+    this.render();
+  },
+
+  render() {
+    if (this.idx >= this.exs.length) { this._showDone(); return; }
+    const ex = this.exs[this.idx];
+    this.ans = false; this.tot++;
+
+    const pct = (this.idx / this.exs.length) * 100;
+    document.getElementById("ep-fill").style.width = pct + "%";
+    document.getElementById("ep-lbl").textContent = `${this.idx+1} / ${this.exs.length}`;
+    document.getElementById("ex-lives").textContent = "❤️".repeat(this.lives) + "🖤".repeat(this.ML - this.lives);
+
+    const body = document.getElementById("ex-body");
+    body.innerHTML = "";
+
+    // Skill tag + question
+    const qw = document.createElement("div");
+    qw.className = "ex-q-wrap";
+    qw.innerHTML = `
+      <div><span class="stag sk-${ex.skill}">${this._ski(ex.skill)} ${ex.skill}</span></div>
+      <p class="ex-q">${ex.q}</p>`;
+    body.appendChild(qw);
+
+    const con = document.createElement("div");
+    con.className = "ex-con"; con.id = "ex-con";
+    body.appendChild(con);
+
+    // Route to type renderer
+    const map = { mc:this._mc, dd:this._dd, sb:this._sb, fib:this._fib, tf:this._tf, es:this._es, listening:this._listening, speaking:this._speaking };
+    (map[ex.type] || this._mc).call(this, ex, con);
+
+    // Feedback & Next
+    const fb = document.createElement("div");
+    fb.id = "ex-fb"; fb.className = "ex-fb";
+    fb.innerHTML = `<div class="fb-top"><span class="fb-icon" id="fb-ico"></span><span class="fb-title" id="fb-tit"></span></div>
+      <div class="fb-body" id="fb-body"></div><div class="fb-rew" id="fb-rew"></div>`;
+    body.appendChild(fb);
+
+    const nb = document.createElement("button");
+    nb.className = "btn-next"; nb.id = "ex-nxt";
+    nb.textContent = this.idx + 1 >= this.exs.length ? "🏁 Finish!" : "Continue →";
+    nb.addEventListener("click", () => { this.idx++; this.render(); });
+    body.appendChild(nb);
+  },
+
+  _ski(s) {
+    return { vocabulary:"📖", grammar:"🔤", reading:"👁️", listening:"👂", speaking:"🎤", writing:"✍️" }[s] || "📚";
+  },
+
+  /* ── MULTIPLE CHOICE ── */
+  _mc(ex, con) {
+    const L = ["A","B","C","D"];
+    ex.opts.forEach((o, i) => {
+      const btn = document.createElement("button");
+      btn.className = "mc-opt";
+      btn.innerHTML = `<span class="mc-letter">${L[i]}</span><span>${o.t}</span>`;
+      btn.addEventListener("click", ev => {
+        if (this.ans) return;
+        this.ans = true;
+        con.querySelectorAll(".mc-opt").forEach(b => b.disabled = true);
+        if (o.c) { btn.classList.add("cor"); this._cor(ex, ev.clientX, ev.clientY); }
+        else {
+          btn.classList.add("wrg");
+          con.querySelectorAll(".mc-opt").forEach((b, j) => { if (ex.opts[j]?.c) b.classList.add("cor"); });
+          this._wrg(ex);
+        }
+      });
+      con.appendChild(btn);
+    });
+  },
+
+  /* ── TRUE / FALSE ── */
+  _tf(ex, con) {
+    const stmt = document.createElement("p");
+    stmt.className = "tf-stmt"; stmt.textContent = `"${ex.stmt}"`;
+    con.appendChild(stmt);
+    const wrap = document.createElement("div");
+    wrap.className = "tf-wrap";
+    const tBtn = document.createElement("button"), fBtn = document.createElement("button");
+    tBtn.className = "tf-btn tf-t"; tBtn.innerHTML = "✓ TRUE";
+    fBtn.className = "tf-btn tf-f"; fBtn.innerHTML = "✗ FALSE";
+    const h = a => {
+      if (this.ans) return; this.ans = true;
+      tBtn.disabled = fBtn.disabled = true;
+      if (a === ex.ans) { (a ? tBtn : fBtn).classList.add("cor"); this._cor(ex, 0, 0); }
+      else { (a ? tBtn : fBtn).classList.add("wrg"); (ex.ans ? tBtn : fBtn).classList.add("cor"); this._wrg(ex); }
+    };
+    tBtn.addEventListener("click", () => h(true));
+    fBtn.addEventListener("click", () => h(false));
+    wrap.appendChild(tBtn); wrap.appendChild(fBtn); con.appendChild(wrap);
+  },
+
+  /* ── FILL IN BLANK ── */
+  _fib(ex, con) {
+    const hint = document.createElement("p");
+    hint.className = "fib-hint"; hint.textContent = "💡 " + ex.hint;
+    const inp = document.createElement("input");
+    inp.className = "fib-inp"; inp.placeholder = "Type your answer…";
+    inp.autocomplete = "off"; inp.spellcheck = false;
+    const btn = document.createElement("button");
+    btn.className = "btn-check"; btn.textContent = "✓ Check Answer";
+    btn.addEventListener("click", () => {
+      if (this.ans) return;
+      const v = inp.value.trim().toLowerCase();
+      const oks = ex.blank.toLowerCase().split("/").map(x => x.trim());
+      this.ans = true;
+      if (oks.includes(v)) { inp.classList.add("cor"); this._cor(ex, 0, 0); }
+      else { inp.classList.add("wrg"); inp.value = ex.blank; this._wrg(ex); }
+    });
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") btn.click(); });
+    con.appendChild(hint); con.appendChild(inp); con.appendChild(btn);
+  },
+
+  /* ════════════════════════════════════════
+     DRAG & DROP  — FIX
+     Uses chipId (unique per element) not word text.
+     ════════════════════════════════════════ */
+  _dd(ex, con) {
+    // Pool of draggable chips
+    const pool = document.createElement("div");
+    pool.className = "dd-pool";
+
+    let dragId = null; // currently dragged chipId
+
+    // Shuffle
+    const shuffled = [...ex.drag].sort(() => Math.random() - .5);
+
+    shuffled.forEach((word, i) => {
+      const chipId = `chip_${i}`;
+      const chip = document.createElement("div");
+      chip.className = "chip chip-word";
+      chip.textContent = word;
+      chip.dataset.chipId = chipId;
+      chip.dataset.word = word;
+      chip.draggable = true;
+
+      chip.addEventListener("dragstart", e => {
+        dragId = chipId;
+        chip.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", chipId + "|" + word);
+      });
+      chip.addEventListener("dragend", () => {
+        chip.classList.remove("dragging");
+      });
+      // Touch: click to cycle through unfilled zones
+      chip.addEventListener("click", () => {
+        if (this.ans || chip.classList.contains("used")) return;
+        const zones = con.querySelectorAll(".dd-zone:not([data-filled])");
+        if (zones.length === 0) return;
+        const zone = zones[0];
+        this._fillZone(zone, chip, word, chipId, con, ex);
+      });
+
+      pool.appendChild(chip);
+    });
+
+    con.appendChild(pool);
+
+    // Drop targets
+    const tgtsDiv = document.createElement("div");
+    tgtsDiv.className = "dd-targets";
+
+    ex.tgts.forEach((t, ti) => {
+      const row = document.createElement("div");
+      row.className = "dd-row";
+      row.innerHTML = `<span class="dd-pfx">${t.pfx}</span>`;
+
+      const zone = document.createElement("div");
+      zone.className = "dd-zone";
+      zone.dataset.ok = t.ok;
+      zone.dataset.idx = ti;
+      zone.textContent = "Drop here";
+
+      zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("over"); });
+      zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+      zone.addEventListener("drop", e => {
+        e.preventDefault();
+        zone.classList.remove("over");
+        if (zone.dataset.filled) return;
+        const payload = e.dataTransfer.getData("text/plain");
+        const [cId, word] = payload.split("|");
+        const chip = pool.querySelector(`[data-chip-id="${cId}"]`);
+        if (chip) this._fillZone(zone, chip, word, cId, con, ex);
+      });
+
+      row.appendChild(zone);
+      tgtsDiv.appendChild(row);
+    });
+    con.appendChild(tgtsDiv);
+  },
+
+  _fillZone(zone, chip, word, chipId, con, ex) {
+    zone.dataset.filled = chipId;
+    zone.dataset.filledWord = word;
+    zone.textContent = word;
+    zone.classList.add("filled");
+    chip.classList.add("used");
+    chip.draggable = false;
+
+    // Check if all zones are filled
+    const allZones = Array.from(con.querySelectorAll(".dd-zone"));
+    if (!allZones.every(z => z.dataset.filled)) return;
+    if (this.ans) return;
+    this.ans = true;
+
+    let allOk = true;
+    allZones.forEach(z => {
+      if ((z.dataset.filledWord || "") !== z.dataset.ok) {
+        allOk = false;
+        z.classList.remove("filled");
+        z.classList.add("bad");
+      }
+    });
+    allOk ? this._cor(ex, 0, 0) : this._wrg(ex);
+  },
+
+  /* ════════════════════════════════════════
+     SENTENCE BUILDER — FIX
+     Each word chip has a unique slotId.
+     Placed tracks {slotId, word} pairs.
+     ════════════════════════════════════════ */
+  _sb(ex, con) {
+    const zone = document.createElement("div");
+    zone.className = "sb-zone"; zone.id = "sb-zone";
+    const hintEl = document.createElement("em");
+    hintEl.textContent = "Tap words to build the sentence…";
+    zone.appendChild(hintEl);
+
+    const pool = document.createElement("div");
+    pool.className = "sb-chip-pool";
+
+    // placed = array of {slotId, word}
+    const placed = [];
+
+    // Shuffle words — each gets a unique slotId even if same text
+    const shuffled = [...ex.words].sort(() => Math.random() - .5);
+    const chips = {};
+
+    shuffled.forEach((word, i) => {
+      const slotId = `slot_${i}`;
+      const chip = document.createElement("div");
+      chip.className = "sb-chip";
+      chip.textContent = word;
+      chip.dataset.slotId = slotId;
+      chip.dataset.word = word;
+      chips[slotId] = chip;
+
+      const addToZone = () => {
+        if (this.ans || chip.classList.contains("used")) return;
+        // Create in-zone token
+        const tok = document.createElement("div");
+        tok.className = "sb-chip in-zone";
+        tok.textContent = word;
+        tok.dataset.slotId = slotId;
+
+        tok.addEventListener("click", () => {
+          if (this.ans) return;
+          // Remove from placed
+          const pi = placed.findIndex(p => p.slotId === slotId);
+          if (pi > -1) placed.splice(pi, 1);
+          tok.remove();
+          chip.classList.remove("used");
+          chip.draggable = true;
+          if (!zone.querySelector(".sb-chip")) zone.appendChild(hintEl);
+        });
+
+        hintEl.remove();
+        zone.appendChild(tok);
+        chip.classList.add("used");
+        chip.draggable = false;
+        placed.push({ slotId, word });
+      };
+
+      chip.addEventListener("click", addToZone);
+      chip.draggable = true;
+      chip.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("text/plain", slotId + "|" + word);
+        chip.classList.add("dragging");
+      });
+      chip.addEventListener("dragend", () => chip.classList.remove("dragging"));
+      pool.appendChild(chip);
+    });
+
+    // Drop on zone
+    zone.addEventListener("dragover", e => { e.preventDefault(); zone.classList.add("over"); });
+    zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+    zone.addEventListener("drop", e => {
+      e.preventDefault();
+      zone.classList.remove("over");
+      const payload = e.dataTransfer.getData("text/plain");
+      const [sId, word] = payload.split("|");
+      const chip = chips[sId];
+      if (chip && !chip.classList.contains("used")) {
+        // simulate click
+        chip.dispatchEvent(new Event("click"));
+      }
+    });
+
+    const checkBtn = document.createElement("button");
+    checkBtn.className = "btn-check"; checkBtn.textContent = "✓ Check Sentence";
+    checkBtn.addEventListener("click", () => {
+      if (this.ans) return;
+      if (!placed.length) { toast("Build your sentence first!", "t-inf"); return; }
+      this.ans = true;
+      const built = placed.map(p => p.word).join(" ");
+      if (built.toLowerCase().trim() === ex.correct.toLowerCase().trim()) this._cor(ex, 0, 0);
+      else this._wrg(ex);
+    });
+
+    con.appendChild(zone);
+    con.appendChild(pool);
+    con.appendChild(checkBtn);
+  },
+
+  /* ── ERROR SPOTTING ── */
+  _es(ex, con) {
+    if (ex.noerr) {
+      const txt = document.createElement("p");
+      txt.className = "es-text"; txt.textContent = ex.text;
+      const note = document.createElement("p");
+      note.style.cssText = "font-size:.78rem;color:var(--t3);margin-top:8px";
+      note.textContent = "This sentence may be correct. Click a word to flag an error, or click 'No Error'.";
+      const btn = document.createElement("button");
+      btn.className = "btn-check"; btn.textContent = "✓ No Error — Sentence is Correct";
+      btn.addEventListener("click", () => { if (this.ans) return; this.ans = true; this._cor(ex, 0, 0); });
+      con.appendChild(txt); con.appendChild(note); con.appendChild(btn); return;
+    }
+    const note = document.createElement("p");
+    note.style.cssText = "font-size:.78rem;color:var(--t3);margin-bottom:10px";
+    note.textContent = "Click the word containing the grammatical error.";
+    con.appendChild(note);
+    const txt = document.createElement("p");
+    txt.className = "es-text";
+    ex.text.split(" ").forEach(raw => {
+      const sp = document.createElement("span");
+      sp.className = "word-sp"; sp.textContent = raw + " ";
+      const clean = raw.replace(/[.,!?;:"]/g, "");
+      sp.addEventListener("click", () => {
+        if (this.ans) return;
+        document.querySelectorAll(".word-sp").forEach(s => s.classList.remove("sel"));
+        this.ans = true;
+        if (clean.toLowerCase() === ex.err.toLowerCase()) {
+          sp.classList.add("wOK"); this._cor(ex, 0, 0);
+        } else {
+          sp.classList.add("wBAD");
+          document.querySelectorAll(".word-sp").forEach(s => {
+            if (s.textContent.trim().replace(/[.,!?;:"]/g,"").toLowerCase() === ex.err.toLowerCase()) s.classList.add("wOK");
+          });
+          this._wrg(ex);
+        }
+      });
+      txt.appendChild(sp);
+    });
+    con.appendChild(txt);
+    const noBtn = document.createElement("button");
+    noBtn.className = "btn-check sec"; noBtn.style.marginTop = "10px";
+    noBtn.textContent = "✗ No Error in This Sentence";
+    noBtn.addEventListener("click", () => { if (this.ans) return; this.ans = true; this._wrg(ex); });
+    con.appendChild(noBtn);
+  },
+
+  /* ════════════════════════════════════════
+     LISTENING EXERCISE
+     Uses SpeechSynthesis API
+     ════════════════════════════════════════ */
+  _listening(ex, con) {
+    const card = document.createElement("div");
+    card.className = "listen-card";
+
+    // Wave visualiser
+    const wave = document.createElement("div");
+    wave.className = "listen-wave";
+    for (let i = 0; i < 6; i++) {
+      const b = document.createElement("div");
+      b.className = "wave-bar paused";
+      wave.appendChild(b);
+    }
+    card.appendChild(wave);
+
+    const listenBtn = document.createElement("button");
+    listenBtn.className = "btn-listen";
+    listenBtn.innerHTML = "🔊 Play Audio";
+
+    const listenNote = document.createElement("p");
+    listenNote.style.cssText = "font-size:.75rem;color:var(--t3);margin-top:-6px";
+    listenNote.textContent = "Listen carefully, then choose the answer below.";
+
+    let played = false;
+    let playCount = 0;
+
+    const playAudio = () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+        const utt = new SpeechSynthesisUtterance(ex.audio);
+        utt.lang = "en-US"; utt.rate = 0.88; utt.pitch = 1;
+        utt.onstart = () => {
+          listenBtn.innerHTML = "🔊 Playing…";
+          listenBtn.classList.add("playing");
+          wave.querySelectorAll(".wave-bar").forEach(b => b.classList.remove("paused"));
+        };
+        utt.onend = () => {
+          listenBtn.innerHTML = playCount >= 1 ? "🔊 Play Again" : "🔊 Play Again";
+          listenBtn.classList.remove("playing");
+          wave.querySelectorAll(".wave-bar").forEach(b => b.classList.add("paused"));
+          played = true; playCount++;
+        };
+        window.speechSynthesis.speak(utt);
+      } else {
+        toast("Speech synthesis not supported in this browser.", "t-err", 3000);
+        played = true;
+      }
+    };
+
+    listenBtn.addEventListener("click", playAudio);
+    card.appendChild(listenBtn);
+    card.appendChild(listenNote);
+    con.appendChild(card);
+
+    // MC options (only shown after first play? No — show always so UX is clear)
+    const optsDiv = document.createElement("div");
+    optsDiv.className = "ex-con";
+    optsDiv.style.marginTop = "8px";
+    const L = ["A","B","C","D"];
+    ex.opts.forEach((o, i) => {
+      const btn = document.createElement("button");
+      btn.className = "mc-opt";
+      btn.innerHTML = `<span class="mc-letter">${L[i]}</span><span>${o.t}</span>`;
+      btn.addEventListener("click", ev => {
+        if (this.ans) return;
+        this.ans = true;
+        window.speechSynthesis && window.speechSynthesis.cancel();
+        wave.querySelectorAll(".wave-bar").forEach(b => b.classList.add("paused"));
+        optsDiv.querySelectorAll(".mc-opt").forEach(b => b.disabled = true);
+        if (o.c) { btn.classList.add("cor"); this._cor(ex, ev.clientX, ev.clientY); }
+        else {
+          btn.classList.add("wrg");
+          optsDiv.querySelectorAll(".mc-opt").forEach((b, j) => { if (ex.opts[j]?.c) b.classList.add("cor"); });
+          this._wrg(ex);
+        }
+      });
+      optsDiv.appendChild(btn);
+    });
+    con.appendChild(optsDiv);
+
+    // Auto-play on render
+    setTimeout(playAudio, 600);
+  },
+
+  /* ════════════════════════════════════════
+     SPEAKING EXERCISE — v2
+     Fixes: mobile compat, onend-before-onresult,
+     continuous mode, AudioContext unlock, timeout
+     ════════════════════════════════════════ */
+  _speaking(ex, con) {
+    const card = document.createElement("div");
+    card.className = "speak-card";
+
+    const prompt = document.createElement("p");
+    prompt.className = "speak-prompt"; prompt.textContent = ex.prompt;
+    card.appendChild(prompt);
+
+    const label = document.createElement("p");
+    label.className = "speak-label"; label.textContent = "🎤 Tap the mic, then speak clearly";
+    card.appendChild(label);
+
+    const micBtn = document.createElement("button");
+    micBtn.className = "btn-mic"; micBtn.innerHTML = "🎤";
+
+    const status = document.createElement("p");
+    status.className = "speak-status"; status.textContent = "Press the mic button to start";
+
+    const transcript = document.createElement("div");
+    transcript.className = "speak-transcript"; transcript.textContent = "Your speech will appear here…";
+
+    card.appendChild(micBtn); card.appendChild(status); card.appendChild(transcript);
+    con.appendChild(card);
+
+    // Evaluate button
+    const checkBtn = document.createElement("button");
+    checkBtn.className = "btn-check"; checkBtn.textContent = "✓ Evaluate My Answer";
+    checkBtn.style.display = "none";
+
+    // Fallback text input
+    const fallback = document.createElement("div");
+    fallback.className = "speak-fallback";
+    const fallbackNote = document.createElement("p");
+    fallbackNote.style.cssText = "font-size:.75rem;color:var(--t3)";
+    fallbackNote.textContent = "No mic? Type your answer below:";
+    const fbInp = document.createElement("input");
+    fbInp.className = "fib-inp"; fbInp.placeholder = "Type what you would say…";
+    fbInp.autocomplete = "off";
+    fallback.appendChild(fallbackNote); fallback.appendChild(fbInp);
+    con.appendChild(fallback); con.appendChild(checkBtn);
+
+    let finalTranscript = "";
+    let gotResult = false;
+    let stopTimer = null;
+    let recording = false;
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    // ── No API at all ──
+    if (!SpeechRec) {
+      status.textContent = "Speech API not available — type your answer below.";
+      micBtn.style.display = "none";
+      fallback.classList.add("visible");
+      checkBtn.style.display = "block";
+      checkBtn.addEventListener("click", () => {
+        if (this.ans) return;
+        this._evalSpeak(ex, fbInp.value.trim().toLowerCase());
+      });
+      fbInp.addEventListener("keydown", e => { if (e.key === "Enter") checkBtn.click(); });
+      return;
+    }
+
+    // ── Build a fresh recognizer each time (required on Safari/iOS) ──
+    const buildRecog = () => {
+      const r = new SpeechRec();
+      r.lang = "en-US";
+      r.continuous = true;          // continuous = true prevents premature stop on mobile
+      r.interimResults = true;
+      r.maxAlternatives = 2;
+      return r;
+    };
+
+    let recog = buildRecog();
+    this._recog = recog;
+
+    const stopRecording = (reason) => {
+      if (!recording) return;
+      recording = false;
+      clearTimeout(stopTimer);
+      try { recog.stop(); } catch(e) {}
+      micBtn.classList.remove("recording");
+      micBtn.innerHTML = "🎤";
+      if (gotResult && finalTranscript) {
+        status.textContent = "✅ Captured — check your answer below.";
+        status.classList.remove("active");
+        checkBtn.style.display = "block";
+        transcript.textContent = finalTranscript;
+      } else if (reason === "timeout" && !gotResult) {
+        status.textContent = "⚠️ No speech detected — try again or type below.";
+        status.classList.remove("active");
+        fallback.classList.add("visible");
+        checkBtn.style.display = "block";
+      } else {
+        status.textContent = "Tap mic to try again.";
+        status.classList.remove("active");
+        if (finalTranscript) checkBtn.style.display = "block";
+      }
+    };
+
+    recog.onresult = e => {
+      gotResult = true;
+      let interimText = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const res = e.results[i];
+        if (res.isFinal) {
+          finalTranscript += " " + res[0].transcript.toLowerCase();
+          finalTranscript = finalTranscript.trim();
+        } else {
+          interimText = res[0].transcript;
+        }
+      }
+      transcript.textContent = finalTranscript
+        ? finalTranscript + (interimText ? " " + interimText : "")
+        : interimText || "Listening…";
+      // Reset auto-stop timer on each new word
+      clearTimeout(stopTimer);
+      stopTimer = setTimeout(() => stopRecording("silence"), 2500);
+    };
+
+    recog.onspeechstart = () => {
+      status.textContent = "🎙️ Speech detected — keep speaking!";
+      clearTimeout(stopTimer);
+    };
+
+    recog.onspeechend = () => {
+      // Don't stop immediately — wait for onresult to fire
+      stopTimer = setTimeout(() => stopRecording("silence"), 800);
+    };
+
+    recog.onerror = e => {
+      recording = false; clearTimeout(stopTimer);
+      micBtn.classList.remove("recording"); micBtn.innerHTML = "🎤";
+      status.classList.remove("active");
+      if (e.error === "not-allowed" || e.error === "permission-denied") {
+        status.textContent = "🚫 Mic permission denied — type your answer below.";
+        fallback.classList.add("visible");
+        checkBtn.style.display = "block";
+        micBtn.style.opacity = "0.4";
+        micBtn.style.pointerEvents = "none";
+      } else if (e.error === "no-speech") {
+        status.textContent = "No speech heard — tap mic and try again.";
+      } else if (e.error === "network") {
+        status.textContent = "Network error — type your answer below.";
+        fallback.classList.add("visible");
+        checkBtn.style.display = "block";
+      } else {
+        status.textContent = `Error (${e.error}) — type below instead.`;
+        fallback.classList.add("visible");
+        checkBtn.style.display = "block";
+      }
+    };
+
+    recog.onend = () => {
+      // onend may fire before onresult on some browsers
+      // If we still have recording=true, give a tiny grace period
+      if (recording) {
+        setTimeout(() => stopRecording("ended"), 300);
+      }
+    };
+
+    micBtn.addEventListener("click", () => {
+      if (this.ans) return;
+
+      // Unlock AudioContext on mobile (user gesture requirement)
+      if (Aud.ctx && Aud.ctx.state === "suspended") {
+        Aud.ctx.resume().catch(() => {});
+      }
+
+      if (recording) {
+        stopRecording("manual"); return;
+      }
+
+      // Fresh recognizer for each session (Safari/iOS requirement)
+      try { recog.stop(); } catch(e) {}
+      recog = buildRecog();
+      this._recog = recog;
+      gotResult = false; finalTranscript = "";
+      transcript.textContent = "Listening…";
+
+      // Attach handlers to the new recognizer instance
+      recog.onresult = e => {
+        gotResult = true;
+        let interimText = "";
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          const res = e.results[i];
+          if (res.isFinal) { finalTranscript += " " + res[0].transcript.toLowerCase(); finalTranscript = finalTranscript.trim(); }
+          else { interimText = res[0].transcript; }
+        }
+        transcript.textContent = finalTranscript ? finalTranscript + (interimText ? " " + interimText : "") : interimText || "Listening…";
+        clearTimeout(stopTimer);
+        stopTimer = setTimeout(() => stopRecording("silence"), 2500);
+      };
+      recog.onspeechstart = () => { status.textContent = "🎙️ Speech detected!"; clearTimeout(stopTimer); };
+      recog.onspeechend  = () => { stopTimer = setTimeout(() => stopRecording("silence"), 800); };
+      recog.onerror = e => {
+        recording = false; clearTimeout(stopTimer);
+        micBtn.classList.remove("recording"); micBtn.innerHTML = "🎤"; status.classList.remove("active");
+        if (e.error === "not-allowed" || e.error === "permission-denied") {
+          status.textContent = "🚫 Mic denied — type below."; fallback.classList.add("visible"); checkBtn.style.display = "block";
+          micBtn.style.opacity = "0.4"; micBtn.style.pointerEvents = "none";
+        } else { status.textContent = `Error (${e.error}) — type below.`; fallback.classList.add("visible"); checkBtn.style.display = "block"; }
+      };
+      recog.onend = () => { if (recording) setTimeout(() => stopRecording("ended"), 300); };
+
+      try {
+        recog.start();
+        recording = true;
+        micBtn.classList.add("recording");
+        micBtn.innerHTML = "⏹";
+        status.textContent = "🔴 Recording — speak now!";
+        status.classList.add("active");
+        // Safety timeout: auto-stop after 15 seconds
+        stopTimer = setTimeout(() => stopRecording("timeout"), 15000);
+      } catch(err) {
+        recording = false;
+        status.textContent = "Could not start mic — type below.";
+        fallback.classList.add("visible"); checkBtn.style.display = "block";
+        console.error("SpeechRecognition start error:", err);
+      }
+    });
+
+    checkBtn.addEventListener("click", () => {
+      if (this.ans) return;
+      if (recording) stopRecording("manual");
+      const t = finalTranscript.trim() || fbInp.value.trim().toLowerCase();
+      if (!t) { toast("Please say or type something first!", "t-inf"); return; }
+      this._evalSpeak(ex, t);
+    });
+
+    fbInp.addEventListener("keydown", e => { if (e.key === "Enter") checkBtn.click(); });
+    fbInp.addEventListener("input", () => { if (fbInp.value.trim()) checkBtn.style.display = "block"; });
+
+    // Always show the text-type toggle
+    const fbToggle = document.createElement("button");
+    fbToggle.className = "btn-check sec"; fbToggle.style.marginTop = "8px";
+    fbToggle.textContent = "⌨️ Type instead of speaking";
+    fbToggle.addEventListener("click", () => {
+      fallback.classList.toggle("visible");
+      fbToggle.textContent = fallback.classList.contains("visible") ? "🎤 Use mic instead" : "⌨️ Type instead of speaking";
+    });
+    con.appendChild(fbToggle);
+  },
+
+  _evalSpeak(ex, transcript) {
+    if (this.ans) return;
+    this.ans = true;
+    const t = transcript.toLowerCase().replace(/[.,!?;:'"]/g, "");
+    // Check: must contain a minimum number of keywords
+    const hits = ex.keywords.filter(kw => t.includes(kw.toLowerCase()));
+    const pass = hits.length >= Math.ceil(ex.keywords.length * 0.5);
+    if (pass) this._cor(ex, 0, 0);
+    else this._wrg(ex);
+  },
+
+  /* ── CORRECT ── */
+  _cor(ex, cx, cy) {
+    const coins = this.gym ? 20 : 10;
+    const xp    = this.gym ? 40 : 20;
+    this.nOk++; this.sXP += xp; this.sCN += coins;
+    S.eco.coins += coins; S.eco.xp += xp;
+    S.radar[ex.skill] = Math.min(100, (S.radar[ex.skill] || 0) + 3);
+    if (this.gym) S.prog.weak = S.prog.weak.filter(id => id !== ex.id);
+    Store.save(); Aud.ok(); this._hud();
+    if (cx && cy) coinFx(coins, cx, cy);
+    this._fb(true, ex.expl, coins, xp);
+  },
+
+  /* ── WRONG ── */
+  _wrg(ex) {
+    this.lives = Math.max(0, this.lives - 1);
+    document.getElementById("ex-lives").textContent = "❤️".repeat(this.lives) + "🖤".repeat(this.ML - this.lives);
+    if (!S.prog.weak.includes(ex.id)) S.prog.weak.push(ex.id);
+    Store.save(); Aud.ng();
+    const c = document.getElementById("ex-con");
+    if (c) { c.classList.add("shk"); setTimeout(() => c.classList.remove("shk"), 400); }
+    this._fb(false, ex.expl, 0, 0);
+    if (this.lives <= 0) {
+      setTimeout(() => {
+        toast("No lives left! Restarting…", "t-err", 2200);
+        setTimeout(() => this.start(this.zone, this.gym), 2300);
+      }, 1400);
+    }
+  },
+
+  /* ── FEEDBACK ── */
+  _fb(ok, expl, coins, xp) {
+    const fb = document.getElementById("ex-fb");
+    document.getElementById("fb-ico").textContent = ok ? "🎉" : "💡";
+    document.getElementById("fb-tit").textContent = ok ? "Correct! Well done!" : "Not quite — study the explanation:";
+    document.getElementById("fb-body").textContent = expl || "";
+    document.getElementById("fb-rew").innerHTML = ok && coins
+      ? `<div class="rew-tag rw-c">🪙 +${coins}</div><div class="rew-tag rw-x">⚡ +${xp} XP</div>${this.gym ? '<div class="rew-tag rw-g">🔥 2× Gym Bonus</div>' : ""}`
+      : "";
+    fb.className = `ex-fb show ${ok ? "ok" : "ng"}`;
+    const nb = document.getElementById("ex-nxt");
+    nb.className = `btn-next show ${ok ? "ok" : "ng"}`;
+    nb.textContent = this.idx + 1 >= this.exs.length ? "🏁 Finish!" : "Continue →";
+  },
+
+  /* ── HUD UPDATE ── */
+  _hud() {
+    ["hc-map","hc-gym"].forEach(id => { const e = document.getElementById(id); if (e) e.textContent = S.eco.coins; });
+    const x = document.getElementById("hx-map"); if (x) x.textContent = S.eco.xp;
+  },
+
+  /* ── DONE SCREEN ── */
+  _showDone() {
+    const total = this.exs.length;
+    const acc   = Math.round((this.nOk / total) * 100);
+    const stars = acc >= 90 ? 3 : acc >= 60 ? 2 : 1;
+    const boss  = this.zone?.type === "boss";
+    const pass  = boss && acc >= 80;
+
+    document.getElementById("d-acc").textContent = acc + "%";
+    document.getElementById("d-xp").textContent  = "+" + this.sXP;
+    document.getElementById("d-cn").textContent  = "+" + this.sCN;
+
+    for (let i = 1; i <= 3; i++) {
+      const s = document.getElementById("ds" + i);
+      s.textContent = i <= stars ? "⭐" : "☆";
+      s.style.opacity = "0";
+    }
+
+    document.getElementById("d-title").textContent = pass
+      ? "🏆 Boss Defeated!"
+      : boss ? "📚 Almost There!"
+      : ["Zone Complete!", "Excellent!", "Brilliant!", "Keep it up!"][Math.floor(Math.random() * 4)];
+
+    document.getElementById("d-sub").textContent = pass
+      ? `${this.zone.cefr} Boss Exam passed! Certificate unlocked!`
+      : boss ? `Need 80%+ to pass. You scored ${acc}%. Try again!`
+      : `${this.nOk} correct out of ${total}.`;
+
+    if (this.zone && acc >= 60 && !S.prog.zones.includes(this.zone.id)) S.prog.zones.push(this.zone.id);
+    if (this.zone) { const e = S.prog.stars[this.zone.id] || 0; if (stars > e) S.prog.stars[this.zone.id] = stars; }
+
+    if (pass) {
+      const wIdx = DB.worlds.findIndex(w => w.id === this.zone.id.split("Z")[0]);
+      if (wIdx >= 0 && wIdx < DB.worlds.length - 1) {
+        const nw = DB.worlds[wIdx + 1];
+        if (!S.prog.worlds.includes(nw.id)) {
+          S.prog.worlds.push(nw.id);
+          toast(`🌍 ${nw.name} Unlocked!`, "t-ok", 3500);
+        }
+      }
+    }
+
+    Store.save(); Aud.done();
+    const gb = document.getElementById("gbadge");
+    if (gb) gb.classList.toggle("off", S.prog.weak.length === 0);
+
+    document.getElementById("s-done").classList.add("show");
+    document.getElementById("d-cont").onclick = () => {
+      document.getElementById("s-done").classList.remove("show");
+      Router.closeEx();
+      if (pass) setTimeout(() => Cert.gen(this.zone.cefr), 700);
+    };
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   GYM SCREEN
+   ═══════════════════════════════════════════════════════════ */
+const GymS = {
+  render() {
+    document.getElementById("hc-gym").textContent = S.eco.coins;
+    const body = document.getElementById("gym-body");
+    const wk = S.prog.weak;
+    const em = Ex.getExMap();
+
+    if (!wk.length) {
+      body.innerHTML = `<div class="gym-empty"><span class="ge-ico">🎯</span><h3 class="ge-title">No Weaknesses Yet!</h3><p class="ge-desc">Complete lessons on the Map to fill your Gym training queue. Keep making mistakes — that's how you learn!</p></div>`;
+      document.getElementById("gbadge").classList.add("off");
+      return;
+    }
+
+    document.getElementById("gbadge").classList.remove("off");
+    const gex = wk.slice(0, 10).map(id => em[id]).filter(Boolean);
+    const icons = { vocabulary:"📖", grammar:"🔤", reading:"👁️", listening:"👂", speaking:"🎤", writing:"✍️" };
+
+    body.innerHTML = `
+      <div class="gym-hero">
+        <span class="gym-ico">💪</span>
+        <h3 class="gym-title">Weakness Training</h3>
+        <p class="gym-desc">Practice ${gex.length} exercises you found difficult. Earn <strong style="color:var(--gold)">2× Bull Coins</strong> for each one you master!</p>
+      </div>
+      <div class="wk-list" id="wk-list"></div>`;
+
+    const list = document.getElementById("wk-list");
+    gex.forEach(ex => {
+      const item = document.createElement("div"); item.className = "wk-item";
+      item.innerHTML = `
+        <div class="wk-ico">${icons[ex.skill]||"📚"}</div>
+        <div class="wk-info">
+          <div class="wk-q">${ex.q.substring(0,58)}${ex.q.length>58?"…":""}</div>
+          <div class="wk-id">${ex.skill.toUpperCase()} · ${ex.type}</div>
+        </div>`;
+      list.appendChild(item);
+    });
+
+    const startBtn = document.createElement("button");
+    startBtn.className = "btn-gym"; startBtn.textContent = "⚡ Start Gym Session";
+    startBtn.addEventListener("click", () => {
+      const gz = { id:"GYM", name:"Gym Session", type:"lesson", exercises: gex.sort(() => Math.random()-.5) };
+      Ex.start(gz, true);
+      Router.go("s-ex");
+      document.getElementById("nav").classList.add("off");
+      document.getElementById("user-chip").classList.add("off");
+    });
+    body.appendChild(startBtn);
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   PROFILE SCREEN
+   Hexagonal radar — 6 skills
+   ═══════════════════════════════════════════════════════════ */
+const ProS = {
+  SKILLS: [
+    { k:"vocabulary", l:"Vocabulary", c:"#4a7cf7" },
+    { k:"grammar",    l:"Grammar",    c:"#2dd4bf" },
+    { k:"reading",    l:"Reading",    c:"#a78bfa" },
+    { k:"listening",  l:"#fbbf24",    c:"#fbbf24", l2:"Listening" },
+    { k:"speaking",   l:"Speaking",   c:"#fb7185" },
+    { k:"writing",    l:"Writing",    c:"#d4a843" }
+  ],
+
+  render() {
+    const { profile:p, eco, radar, prog, inv } = S;
+    const lv   = Math.floor(eco.xp / 500) + 1;
+    const xIn  = eco.xp % 500;
+    const xPct = Math.min(100, Math.round(xIn / 500 * 100));
+    const dz   = prog.zones.length;
+    const tz   = DB.worlds.reduce((a, w) => a + w.zones.length, 0);
+    const sk   = SHOP.find(s => s.id === p.skin) || SHOP[0];
+
+    // Update nav avatar
+    const navAv = document.getElementById("nav-av");
+    const navNm = document.getElementById("nav-nm");
+    if (navAv) navAv.textContent = sk.emoji;
+    if (navNm) navNm.textContent = p.name ? p.name.split(" ")[0].substring(0,8) : "Profile";
+
+    document.getElementById("pro-body").innerHTML = `
+      <div class="pro-hero">
+        <div class="av-wrap">
+          <div class="av-ring ${sk.css}">${sk.emoji}</div>
+          <span class="av-lv">Lv.${lv}</span>
+        </div>
+        <h2 class="pro-name">${p.name || "Student"}</h2>
+        <p class="pro-title">${this._title(lv)}</p>
+        <div class="pro-stats">
+          <div class="pro-stat"><div class="ps-val" style="color:var(--gold)">${eco.coins}</div><div class="ps-lbl">Coins</div></div>
+          <div class="pro-stat"><div class="ps-val" style="color:var(--purp)">${eco.xp}</div><div class="ps-lbl">Total XP</div></div>
+          <div class="pro-stat"><div class="ps-val">${dz}/${tz}</div><div class="ps-lbl">Zones</div></div>
+          <div class="pro-stat"><div class="ps-val" style="color:var(--err)">${prog.weak.length}</div><div class="ps-lbl">Weak</div></div>
+        </div>
+      </div>
+
+      <div class="pro-section">
+        <div class="sec-lbl">Level Progress</div>
+        <div class="xp-card">
+          <div class="xp-row"><span>Level ${lv}</span><span>${xIn} / 500 XP to Level ${lv+1}</span></div>
+          <div class="xp-track"><div class="xp-fill" id="xp-fill" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="pro-section">
+        <div class="sec-lbl">Skill Radar — 6 Dimensions</div>
+        <div class="radar-wrap"><canvas id="radar-cv" width="260" height="260"></canvas></div>
+        <div class="radar-legend">${this._legend()}</div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="pro-section">
+        <div class="sec-lbl">Account</div>
+        <p style="font-size:.82rem;color:var(--t2);margin-bottom:6px">Signed in as <strong style="color:var(--t1)">${p.name || "Student"}</strong> · Member since ${p.joined}</p>
+      </div>
+      <button class="btn-logout" id="btn-logout">🚪 Sign Out & Reset Progress</button>
+    `;
+
+    // Logout handler
+    document.getElementById("btn-logout").addEventListener("click", () => {
+      if (!confirm("⚠️ This will erase ALL your progress and sign you out. Are you sure?")) return;
+      localStorage.removeItem(Store.K);
+      toast("Signed out. Reloading…", "t-inf", 1500);
+      setTimeout(() => location.reload(), 1600);
+    });
+
+    requestAnimationFrame(() => {
+      const f = document.getElementById("xp-fill");
+      if (f) f.style.width = xPct + "%";
+      const cv = document.getElementById("radar-cv");
+      if (cv) this._drawRadar(cv);
+    });
+  },
+
+  _title(lv) {
+    if (lv >= 20) return "C2 Master · The Apex";
+    if (lv >= 16) return "C1 Advanced · The Connoisseur";
+    if (lv >= 12) return "B2 Upper-Intermediate · The Debater";
+    if (lv >= 8)  return "B1 Intermediate · The Conversationalist";
+    if (lv >= 4)  return "A2 Elementary · The Explorer";
+    return "A1 Beginner · The Initiate";
+  },
+
+  _legend() {
+    return this.SKILLS.map(s => {
+      const val = S.radar[s.k] || 0;
+      return `
+        <div class="rl-item">
+          <div class="rl-dot" style="background:${s.c}"></div>
+          <span>${s.l2 || s.l}</span>
+          <div class="rl-bar"><div class="rl-fill" style="width:${val}%;background:${s.c}"></div></div>
+          <span class="rl-pct">${val}%</span>
+        </div>`;
+    }).join("");
+  },
+
+  /* ── HEXAGONAL RADAR (6 axes) ── */
+  _drawRadar(canvas) {
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+    const cx = W / 2, cy = H / 2;
+    const maxR = Math.min(W, H) * 0.34;
+    const N = 6; // hexagon
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Helper: angle for axis i (start from top, go clockwise)
+    const angle = i => (Math.PI * 2 / N) * i - Math.PI / 2;
+
+    // Grid rings (concentric hexagons)
+    [0.25, 0.5, 0.75, 1.0].forEach(p => {
+      ctx.beginPath();
+      for (let i = 0; i < N; i++) {
+        const a = angle(i), r = maxR * p;
+        const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(255,255,255,0.07)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+
+    // Axis lines
+    for (let i = 0; i < N; i++) {
+      const a = angle(i);
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + maxR * Math.cos(a), cy + maxR * Math.sin(a));
+      ctx.strokeStyle = "rgba(255,255,255,0.09)";
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    // Skill data polygon
+    const skills = this.SKILLS;
+    ctx.beginPath();
+    skills.forEach((s, i) => {
+      const a = angle(i);
+      const r = ((S.radar[s.k] || 0) / 100) * maxR;
+      const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.fillStyle = "rgba(212,168,67,0.14)";
+    ctx.fill();
+    ctx.strokeStyle = "rgba(212,168,67,0.7)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dots per skill
+    skills.forEach((s, i) => {
+      const a = angle(i);
+      const r = ((S.radar[s.k] || 0) / 100) * maxR;
+      const x = cx + r * Math.cos(a), y = cy + r * Math.sin(a);
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = s.c;
+      ctx.fill();
+    });
+
+    // Labels
+    skills.forEach((s, i) => {
+      const a = angle(i);
+      const lr = maxR + 22;
+      const lx = cx + lr * Math.cos(a);
+      const ly = cy + lr * Math.sin(a) + 4;
+      ctx.font = "600 9.5px 'DM Sans', sans-serif";
+      ctx.fillStyle = "rgba(240,238,232,0.6)";
+      ctx.textAlign = "center";
+      ctx.fillText(s.l2 || s.l, lx, ly);
+    });
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   SHOP SCREEN
+   ═══════════════════════════════════════════════════════════ */
+const ShopS = {
+  render() {
+    const owned  = S.inv.skins;
+    const active = S.profile.skin || "sk-default";
+    const coins  = S.eco.coins;
+    const body   = document.getElementById("shop-body");
+
+    body.innerHTML = `
+      <div class="bal-banner">
+        <span class="bb-ico">🪙</span>
+        <div><div class="bb-lbl">Your Balance</div><div class="bb-val">${coins}</div></div>
+      </div>
+      <div class="shop-section-lbl">Avatar Skins</div>
+      <div class="shop-grid" id="shop-grid"></div>`;
+
+    const grid = document.getElementById("shop-grid");
+
+    SHOP.forEach(item => {
+      const isOwned    = owned.includes(item.id);
+      const isEquipped = active === item.id;
+      const canAfford  = coins >= item.price;
+
+      const card = document.createElement("div");
+      card.className = `shop-card${isOwned?" owned":""}${isEquipped?" equip":""}`;
+      card.innerHTML = `
+        <div class="sc-av ${item.css}">${item.emoji}</div>
+        <div class="sc-name">${item.name}</div>
+        <div class="sc-desc">${item.desc}</div>
+        <div class="sc-price">${item.price === 0 ? '<span style="color:var(--ok)">FREE</span>' : `🪙 ${item.price}`}</div>`;
+
+      let btn = document.createElement("button");
+      if (isEquipped) {
+        btn.className = "sh-btn sb-equipped"; btn.disabled = true; btn.textContent = "✓ Equipped";
+      } else if (isOwned) {
+        btn.className = "sh-btn sb-equip"; btn.textContent = "Equip";
+        btn.addEventListener("click", () => this._equip(item.id));
+      } else {
+        btn.className = "sh-btn sb-buy"; btn.disabled = !canAfford;
+        btn.textContent = canAfford ? `🪙 ${item.price}` : `🔒 ${item.price}`;
+        btn.addEventListener("click", ev => this._buy(item, ev));
+      }
+      card.appendChild(btn);
+      grid.appendChild(card);
+    });
+  },
+
+  _buy(item, ev) {
+    if (S.eco.coins < item.price) { toast("Not enough Bull Coins!", "t-err"); return; }
+    S.eco.coins -= item.price;
+    S.inv.skins.push(item.id);
+    Store.save(); Aud.coin();
+    coinFx(-item.price, ev.clientX, ev.clientY);
+    toast(`${item.name} unlocked! 🎉`, "t-ok");
+    this.render();
+  },
+
+  _equip(id) {
+    S.profile.skin = id;
+    Store.save();
+    updateNavUser();   // updates nav + chip
+    toast("Skin equipped! 🎉", "t-inf");
+    this.render();
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   RANK SCREEN
+   ═══════════════════════════════════════════════════════════ */
+const RankS = {
+  _bNames: ["Alex_Pro","Sarah99","GamerEng","LunaESL","MaxWords","JennyB2","TopEnglish","CefrMaster","WordSmith","GramBot"],
+  _bEmoji: ["🦊","🐺","🦅","🐯","🦁","🦈","🐻","🦝","🐼","🦋"],
+
+  _initBots() {
+    if (!S.bots) {
+      S.bots = this._bNames.map((n, i) => ({
+        name:n, emoji:this._bEmoji[i % this._bEmoji.length],
+        xp: Math.floor(Math.random() * 3000) + 300
+      }));
+    }
+    S.bots.forEach(b => { b.xp += Math.floor(Math.random() * 55); });
+    Store.save();
+  },
+
+  render() {
+    this._initBots();
+    const skinData = SHOP.find(s => s.id === (S.profile.skin || "sk-default")) || SHOP[0];
+    const all = [...S.bots.map(b => ({...b})), { name: S.profile.name || "You", emoji: skinData.emoji, xp: S.eco.xp, isU: true }]
+      .sort((a, b) => b.xp - a.xp);
+    const ur = all.findIndex(p => p.isU) + 1;
+    const body = document.getElementById("rank-body");
+
+    const top3 = all.slice(0, 3);
+    let podHtml = '<div class="podium-area">';
+    [1, 0, 2].forEach(i => {
+      if (!top3[i]) return;
+      const p = top3[i], rk = i + 1;
+      const medals = ["🥇","🥈","🥉"];
+      podHtml += `<div class="pod-pos">
+        <div class="pod-av">${p.emoji}</div>
+        <div class="pod-name">${p.name}</div>
+        <div class="pod-xp">${p.xp.toLocaleString()} XP</div>
+        <div class="pod-blk pb${rk}">${medals[i]}</div>
+      </div>`;
+    });
+    podHtml += "</div>";
+
+    const note = `<p class="rank-note">You are <strong style="color:var(--gold)">#${ur}</strong> of ${all.length}. ${ur > 1 ? `<span style="color:var(--purp)">${all[ur-2].xp - S.eco.xp + 1} XP</span> to move up!` : "🏆 You're leading!"}</p>`;
+
+    let tbl = `<div class="rank-tbl"><div class="rank-hd"><span>#</span><span>Player</span><span style="text-align:right">XP</span></div>`;
+    all.forEach((p, i) => {
+      const rk = i + 1;
+      const pc = rk === 1 ? "g" : rk === 2 ? "s" : rk === 3 ? "b" : "";
+      const pl = rk === 1 ? "🥇" : rk === 2 ? "🥈" : rk === 3 ? "🥉" : rk;
+      tbl += `<div class="rank-row${p.isU?" you":""}">
+        <span class="rr-pos ${pc}">${pl}</span>
+        <div class="rr-player"><div class="rr-av">${p.emoji}</div><span class="rr-nm">${p.name}${p.isU?" (You)":""}</span></div>
+        <span class="rr-xp">${p.xp.toLocaleString()}</span>
+      </div>`;
+    });
+    tbl += "</div>";
+    body.innerHTML = podHtml + note + tbl;
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   CERTIFICATE
+   ═══════════════════════════════════════════════════════════ */
+const Cert = {
+  CEFR_DATA: {
+    A1:{ color:"#4a7cf7", color2:"#2a4cb0", label:"A1 — Beginner",     desc:"Foundation of English" },
+    A2:{ color:"#2dd4bf", color2:"#0e9b8a", label:"A2 — Elementary",   desc:"Everyday Communication" },
+    B1:{ color:"#f59e0b", color2:"#b36e08", label:"B1 — Intermediate", desc:"Independent User" },
+    B2:{ color:"#a78bfa", color2:"#6d4fc7", label:"B2 — Upper-Intermediate", desc:"Confident Communicator" },
+    C1:{ color:"#d4a843", color2:"#8c6e1f", label:"C1 — Advanced",     desc:"Effective Operational Proficiency" },
+    C2:{ color:"#f4657a", color2:"#b03048", label:"C2 — Mastery",      desc:"Full Professional Mastery" },
+  },
+
+  gen(cefr) {
+    const modal  = document.getElementById("s-cert");
+    const canvas = document.getElementById("cert-canvas");
+    const ctx    = canvas.getContext("2d");
+    const W = 800, H = 560;
+    canvas.width  = W;
+    canvas.height = H;
+    canvas.style.width  = "100%";
+    canvas.style.height = "auto";
+
+    const cd = this.CEFR_DATA[cefr] || this.CEFR_DATA["A1"];
+
+    // ── Background ──
+    const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+    bgGrad.addColorStop(0,   "#06060e");
+    bgGrad.addColorStop(0.5, "#0c0c1a");
+    bgGrad.addColorStop(1,   "#10101e");
+    ctx.fillStyle = bgGrad; ctx.fillRect(0, 0, W, H);
+
+    // ── Corner decorative gradient blooms ──
+    const bloom = (x, y, r, color) => {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, color + "22");
+      g.addColorStop(1, "transparent");
+      ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+    };
+    bloom(0,   0,   220, cd.color);
+    bloom(W,   H,   220, cd.color2);
+    bloom(0,   H,   140, "#d4a843");
+    bloom(W,   0,   140, "#d4a843");
+
+    // ── Outer ornate border ──
+    const borderGrad = ctx.createLinearGradient(0, 0, W, H);
+    borderGrad.addColorStop(0,   cd.color);
+    borderGrad.addColorStop(0.5, "#d4a843");
+    borderGrad.addColorStop(1,   cd.color2);
+    ctx.strokeStyle = borderGrad;
+    ctx.lineWidth = 4;
+    ctx.strokeRect(14, 14, W - 28, H - 28);
+
+    // Inner thin border
+    ctx.strokeStyle = "rgba(212,168,67,0.25)";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(24, 24, W - 48, H - 48);
+
+    // ── Corner ornaments ──
+    const corners = [[34,34],[W-34,34],[34,H-34],[W-34,H-34]];
+    corners.forEach(([cx, cy]) => {
+      ctx.strokeStyle = cd.color + "99";
+      ctx.lineWidth = 2;
+      // L-shape corner
+      const sz = 22;
+      const sx = cx < W/2 ? 1 : -1, sy = cy < H/2 ? 1 : -1;
+      ctx.beginPath(); ctx.moveTo(cx, cy + sy*sz); ctx.lineTo(cx, cy); ctx.lineTo(cx + sx*sz, cy); ctx.stroke();
+      // Small diamond
+      ctx.beginPath(); ctx.arc(cx, cy, 4, 0, Math.PI*2);
+      ctx.fillStyle = cd.color + "cc"; ctx.fill();
+    });
+
+    // ── Side decorative lines ──
+    const drawSideLine = (x, y1, y2, alpha) => {
+      ctx.strokeStyle = `rgba(212,168,67,${alpha})`;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 6]);
+      ctx.beginPath(); ctx.moveTo(x, y1); ctx.lineTo(x, y2); ctx.stroke();
+      ctx.setLineDash([]);
+    };
+    drawSideLine(48, 60, H-60, 0.2);
+    drawSideLine(W-48, 60, H-60, 0.2);
+
+    // ── Header seal area ──
+    // Circular watermark behind seal
+    const sealX = W/2, sealY = 115;
+    const outerRing = ctx.createRadialGradient(sealX, sealY, 30, sealX, sealY, 68);
+    outerRing.addColorStop(0, "rgba(212,168,67,0.08)");
+    outerRing.addColorStop(1, "transparent");
+    ctx.fillStyle = outerRing; ctx.beginPath(); ctx.arc(sealX, sealY, 68, 0, Math.PI*2); ctx.fill();
+
+    // Decorative ring
+    ctx.beginPath(); ctx.arc(sealX, sealY, 58, 0, Math.PI*2);
+    ctx.strokeStyle = "rgba(212,168,67,0.3)"; ctx.lineWidth = 1.5;
+    ctx.setLineDash([3, 5]); ctx.stroke(); ctx.setLineDash([]);
+
+    ctx.beginPath(); ctx.arc(sealX, sealY, 50, 0, Math.PI*2);
+    ctx.strokeStyle = "rgba(212,168,67,0.18)"; ctx.lineWidth = 1; ctx.stroke();
+
+    // Bull emoji centered
+    ctx.font = "52px serif";
+    ctx.textAlign = "center";
+    ctx.fillText("🐂", sealX, sealY + 18);
+
+    // ── Academy name ──
+    ctx.font = "bold 11px 'Syne',sans-serif";
+    ctx.fillStyle = cd.color;
+    ctx.letterSpacing = "0.3em";
+    ctx.textAlign = "center";
+    ctx.fillText("BULL ENGLISH ACADEMY", W/2, 186);
+    ctx.letterSpacing = "0";
+
+    // Ornamental divider
+    const drawDivider = (y, w, color) => {
+      const half = w / 2;
+      const gd = ctx.createLinearGradient(W/2 - half, y, W/2 + half, y);
+      gd.addColorStop(0, "transparent");
+      gd.addColorStop(0.2, color);
+      gd.addColorStop(0.8, color);
+      gd.addColorStop(1, "transparent");
+      ctx.fillStyle = gd;
+      ctx.fillRect(W/2 - half, y - 0.5, w, 1);
+    };
+    drawDivider(196, 420, "rgba(212,168,67,0.45)");
+    // Diamond center
+    ctx.save();
+    ctx.translate(W/2, 196);
+    ctx.rotate(Math.PI/4);
+    ctx.fillStyle = cd.color; ctx.fillRect(-4, -4, 8, 8);
+    ctx.restore();
+
+    // ── "Certificate of Achievement" ──
+    ctx.font = "italic 13px 'DM Sans',sans-serif";
+    ctx.fillStyle = "rgba(240,238,232,0.5)";
+    ctx.textAlign = "center";
+    ctx.fillText("CERTIFICATE OF ACHIEVEMENT", W/2, 222);
+
+    // ── "This is to certify that" ──
+    ctx.font = "12px 'DM Sans',sans-serif";
+    ctx.fillStyle = "rgba(240,238,232,0.38)";
+    ctx.fillText("This is to certify that", W/2, 260);
+
+    // ── Student name ──
+    ctx.font = "bold 42px 'DM Sans',sans-serif";
+    ctx.fillStyle = "#f0eee8";
+    ctx.shadowColor = cd.color + "55";
+    ctx.shadowBlur = 16;
+    ctx.fillText(S.profile.name || "Student", W/2, 316);
+    ctx.shadowBlur = 0;
+
+    // Name underline
+    const nameW = ctx.measureText(S.profile.name || "Student").width;
+    const unGrad = ctx.createLinearGradient(W/2 - nameW/2, 0, W/2 + nameW/2, 0);
+    unGrad.addColorStop(0, "transparent");
+    unGrad.addColorStop(0.15, cd.color + "bb");
+    unGrad.addColorStop(0.85, cd.color + "bb");
+    unGrad.addColorStop(1, "transparent");
+    ctx.fillStyle = unGrad;
+    ctx.fillRect(W/2 - nameW/2 - 16, 324, nameW + 32, 1.5);
+
+    // ── "has successfully completed" ──
+    ctx.font = "13px 'DM Sans',sans-serif";
+    ctx.fillStyle = "rgba(240,238,232,0.4)";
+    ctx.fillText("has successfully completed the CEFR Boss Examination for", W/2, 356);
+
+    // ── CEFR badge ──
+    const badgeW = 260, badgeH = 46;
+    const bx = W/2 - badgeW/2, by = 370;
+    const bdg = ctx.createLinearGradient(bx, by, bx + badgeW, by);
+    bdg.addColorStop(0, cd.color2);
+    bdg.addColorStop(1, cd.color);
+    ctx.fillStyle = bdg;
+    ctx.beginPath(); ctx.roundRect(bx, by, badgeW, badgeH, 10); ctx.fill();
+    // Badge inner border
+    ctx.strokeStyle = "rgba(255,255,255,0.25)"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(bx+2, by+2, badgeW-4, badgeH-4, 8); ctx.stroke();
+
+    ctx.font = "bold 16px 'Syne',sans-serif";
+    ctx.fillStyle = "#ffffff";
+    ctx.textAlign = "center";
+    ctx.fillText(cd.label, W/2, by + 21);
+    ctx.font = "10px 'DM Sans',sans-serif";
+    ctx.fillStyle = "rgba(255,255,255,0.75)";
+    ctx.fillText(cd.desc, W/2, by + 37);
+
+    // ── Bottom divider ──
+    drawDivider(436, 480, "rgba(212,168,67,0.3)");
+
+    // ── Footer row ──
+    const issueDate = new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+    const score = "Score: ≥80%";
+
+    ctx.font = "10px 'DM Sans',sans-serif";
+    ctx.fillStyle = "rgba(240,238,232,0.28)";
+    ctx.textAlign = "left";
+    ctx.fillText("📅 Issued: " + issueDate, 60, 464);
+    ctx.textAlign = "center";
+    ctx.fillText("CEFR Level " + cefr + " · Common European Framework of Reference", W/2, 464);
+    ctx.textAlign = "right";
+    ctx.fillText("✓ " + score, W - 60, 464);
+
+    // ── Micro decorative dots at footer ──
+    [W/2 - 120, W/2 - 60, W/2, W/2 + 60, W/2 + 120].forEach((x, i) => {
+      ctx.beginPath(); ctx.arc(x, 480, 2, 0, Math.PI*2);
+      ctx.fillStyle = i === 2 ? cd.color : "rgba(212,168,67,0.3)";
+      ctx.fill();
+    });
+
+    // ── Watermark ──
+    ctx.save();
+    ctx.globalAlpha = 0.03;
+    ctx.font = "bold 110px 'Syne',sans-serif";
+    ctx.fillStyle = cd.color;
+    ctx.textAlign = "center";
+    ctx.translate(W/2, H/2 + 30);
+    ctx.rotate(-Math.PI / 12);
+    ctx.fillText("CERTIFIED", 0, 0);
+    ctx.restore();
+
+    modal.classList.add("show");
+
+    document.getElementById("btn-cert-dl").onclick = () => {
+      const a = document.createElement("a");
+      a.download = `BullAcademy_${cefr}_Certificate.png`;
+      a.href = canvas.toDataURL("image/png", 1.0);
+      a.click();
+      toast("Certificate downloaded! 🎓", "t-ok");
+    };
+    document.getElementById("btn-cert-cl").onclick = () => modal.classList.remove("show");
+  }
+};
+
+/* ═══════════════════════════════════════════════════════════
+   CLOSE EXERCISE BUTTON
+   ═══════════════════════════════════════════════════════════ */
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("ex-close").addEventListener("click", () => {
+    if (!confirm("Exit this exercise? Progress will be lost.")) return;
+    document.getElementById("s-done").classList.remove("show");
+    Router.closeEx();
+  });
+
+  // User chip → navigate to Profile
+  const chip = document.getElementById("user-chip");
+  if (chip) chip.addEventListener("click", () => Router.go("s-pro"));
+});
+
+/* ═══════════════════════════════════════════════════════════
+   ONBOARDING (no 'this' binding — uses plain variable)
+   ═══════════════════════════════════════════════════════════ */
+function initOnboarding() {
+  let selLv = "A1";
+
+  document.getElementById("lvl-grid").querySelectorAll(".lv-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".lv-btn").forEach(b => b.classList.remove("sel"));
+      btn.classList.add("sel");
+      selLv = btn.dataset.lv;
+    });
+  });
+
+  document.getElementById("btn-start").addEventListener("click", () => {
+    const inp  = document.getElementById("inp-name");
+    const name = inp.value.trim();
+    if (!name) {
+      inp.classList.add("has-err"); inp.focus();
+      toast("Please enter your name first!", "t-err");
+      setTimeout(() => inp.classList.remove("has-err"), 1600);
+      return;
+    }
+
+    S.profile.name = name;
+    S.eco = { coins:150, xp:0 };
+
+    const lvlOrder = ["A1","A2","B1","B2","C1","C2"];
+    const si = Math.max(0, lvlOrder.indexOf(selLv));
+    S.prog.worlds = [];
+    for (let i = 0; i <= si; i++) S.prog.worlds.push(`W${i+1}`);
+    // Only 3 worlds — cap
+    S.prog.worlds = S.prog.worlds.filter(w => ["W1","W2","W3"].includes(w));
+
+    Store.save();
+
+    // THE KEY FIX: just manipulate classes, let the CSS do the work
+    document.getElementById("s-splash").classList.remove("active");
+    document.getElementById("nav").classList.remove("off");
+    updateNavUser();
+    Router.go("s-map");
+    toast(`Welcome, ${name}! 🐂 Let's begin!`, "t-ok", 3200);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOOTSTRAP
+   ═══════════════════════════════════════════════════════════ */
+function updateNavUser() {
+  const sk = SHOP.find(s => s.id === (S.profile.skin || "sk-default")) || SHOP[0];
+  const navAv = document.getElementById("nav-av");
+  const navNm = document.getElementById("nav-nm");
+  if (navAv) navAv.textContent = sk.emoji;
+  if (navNm) navNm.textContent = S.profile.name ? S.profile.name.split(" ")[0].substring(0,8) : "Profile";
+
+  // Update fixed user chip
+  const chip   = document.getElementById("user-chip");
+  const ucAv   = document.getElementById("uc-av");
+  const ucName = document.getElementById("uc-name");
+  if (chip && S.profile.name) {
+    ucAv.textContent   = sk.emoji;
+    ucName.textContent = S.profile.name;
+    chip.classList.remove("off");
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  Aud.init();
+  const has = Store.load();
+  Router.init();
+
+  if (has && S.profile.name && S.profile.name !== "") {
+    document.getElementById("s-splash").classList.remove("active");
+    document.getElementById("nav").classList.remove("off");
+    updateNavUser();
+    const gb = document.getElementById("gbadge");
+    if (gb) gb.classList.toggle("off", S.prog.weak.length === 0);
+    Router.go("s-map");
+  } else {
+    // Splash has 'active' from HTML — just init onboarding
+    initOnboarding();
+  }
+});
+</script>
+</body>
+</html>
